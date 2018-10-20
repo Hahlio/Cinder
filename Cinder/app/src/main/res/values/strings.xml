@@ -12,4 +12,11 @@
     <string name="university">University</string>
     <string name="studyLocation">Preferred Study Location</string>
     <string name="submit">Submit</string>
+    <string name="name">Name</string>
+    <string name="interest">Interest</string>
+    <string name="fullName">First, Last</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="courses">Course1, Course2</string>
+    <string name="location">Location</string>
 </resources>
