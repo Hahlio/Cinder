@@ -20,6 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Signin extends AppCompatActivity {
     public static final String BASE_URL = "http://52.183.2.222/";
+    public boolean loggedin = false;
 
     static Retrofit getRetro(){
         Retrofit retrofit = new Retrofit.Builder()
@@ -31,6 +32,7 @@ public class Signin extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loggedin = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
@@ -42,6 +44,18 @@ public class Signin extends AppCompatActivity {
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Thread thread = new Thread(new Runnable(){
+                    @Override
+                    public void run(){
+                        while(!loggedin) {}
+                        if (mpref.getBoolean("loggedIn", false))
+                            changeToMatchMaking();
+                        else
+                            changeToProfileCreation();
+
+                    }
+                });
+                thread.start();
                 Retrofit retrofit = getRetro();
                 restApiCalls apiCalls = retrofit.create(restApiCalls.class);
                 String username = usernameInput.getText().toString();
@@ -53,7 +67,12 @@ public class Signin extends AppCompatActivity {
                         if(!(profileID==-1)){
                             SharedPreferences.Editor editor = mpref.edit();
                             editor.putInt("profileID", profileID).putBoolean("loggedIn",true).apply();
+
+                        }else {
+                            SharedPreferences.Editor editor = mpref.edit();
+                            editor.putBoolean("loggedIn",false).apply();
                         }
+                        loggedin = true;
                     }
 
                     @Override
@@ -62,10 +81,7 @@ public class Signin extends AppCompatActivity {
                     }
                 });
 
-                if(mpref.getBoolean("loggedIn",false))
-                    changeToMatchMaking();
-                else
-                    changeToProfileCreation();
+
             }
         });
 

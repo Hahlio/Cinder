@@ -36,7 +36,10 @@ public class matchMaking extends AppCompatActivity {
             @Override
             public void run(){
                 while(pmatches==null){}
-                showProfile(pmatches.get(0));
+                if(!pmatches.isEmpty())
+                    showProfile(pmatches.get(0));
+                else
+                    outOfMatches();
             }
         });
         thread.start();
@@ -44,22 +47,26 @@ public class matchMaking extends AppCompatActivity {
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pmatches.remove(0);
-                if(!pmatches.isEmpty())
-                    showProfile(pmatches.get(0));
-                else
-                    outOfMatches();
+                if(!pmatches.isEmpty()){
+                    pmatches.remove(0);
+                    if(!pmatches.isEmpty())
+                        showProfile(pmatches.get(0));
+                    else
+                        outOfMatches();
+                }
             }
         });
 
         noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pmatches.remove(0);
-                if(!pmatches.isEmpty())
-                    showProfile(pmatches.get(0));
-                else
-                    outOfMatches();
+                if(!pmatches.isEmpty()){
+                    pmatches.remove(0);
+                    if(!pmatches.isEmpty())
+                        showProfile(pmatches.get(0));
+                    else
+                        outOfMatches();
+                }
             }
         });
 

@@ -79,8 +79,8 @@ public class profileCreation extends AppCompatActivity {
         newProfile.setCourses(course0.getText().toString()+","+course1.getText().toString()+
                 ","+course2.getText().toString()+","+course3.getText().toString()+
                 ","+course4.getText().toString()+","+course5.getText().toString());
-        newProfile.setLat((double) 0);
-        newProfile.setLng((double) 0);
+        newProfile.setLat(49.666);
+        newProfile.setLng( 123.1336);
         return newProfile;
     }
 
