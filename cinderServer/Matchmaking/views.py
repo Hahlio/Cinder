@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse, HttpRequest, JsonResponse
+from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseNotFound
 from userprofile.models import Profile
 from .models import Match
 from .serializers import ProfileListSerializer, MatchListSerializer
@@ -19,8 +19,8 @@ class matches(APIView):
 
     def get(self, request, profile_id):
     	profileList = Match.returnListOfMatches(profile_id)
-    	serializer = ProfileListSerializer(profileList , many=True)
-    	return Response(serializer.data)
+    	#serializer = ProfileListSerializer(profileList , many=True)
+    	return Response(profileList, status=status.HTTP_200_OK)
 
     def post(self, request, profile_id):
     	return Response(request.data, status=status.HTTP_400_BAD_REQUEST)

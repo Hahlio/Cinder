@@ -6,7 +6,8 @@ class ProfileListSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Profile
-		fields = ('id','name', 'school', 'courses', 'lat', 'lng')
+		#,'name', 'school', 'courses', 'lat', 'lng'
+		fields = ('id',)
 		# fields = '__all__'
 
 

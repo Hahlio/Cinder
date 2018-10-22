@@ -82,18 +82,22 @@ class Match(models.Model):
         return self.score
 
     def returnListOfMatches(profile_id):
-    	p = Profile.objects.get(pk=profile_id)
+        p = Profile.objects.get(pk=profile_id)
 
-    	# Grabs all that are not matched, score greater than 0, ordered by decreasing order.
-    	# give only last 5.
-    	profileList = []
+        # Grabs all that are not matched, score greater than 0, ordered by decreasing order.
+        # give only last 5.
+        retVal = {}
+        profileList = []
+
         # 
-    	matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
-    	for eachMatch in matchList:
-            profileList.append(eachMatch.returnOtherMatch(p))
-    		#profileList.append(Match.returnOtherMatch(p))
+        matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
+        for eachMatch in matchList:
+            profileList.append(eachMatch.returnOtherMatch(p).id)
+        	#profileList.append(Match.returnOtherMatch(p))
 
-    	return profileList
+        retVal["Matches"] = profileList
+        #matchList.returnOtherMatch(p).id
+        return retVal
 
 
     def returnMatch(x):
