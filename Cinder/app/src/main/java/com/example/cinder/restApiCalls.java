@@ -23,8 +23,10 @@ public interface restApiCalls {
     @PUT("profile/{profileID}")
     Call<Profile> changeProfile(@Body Profile profile,@Path("profileID") int profileID );
 
-    @GET("profile/{profileID}/pMatches")
-    Call<List<ProfileID>> getMatches(@Path("profileID") int profileID);
+    @GET("matchmaking/{profileID}")
+    Call<Matches> getMatches(@Path("profileID") int profileID);
 
+    @PUT("matchmaking/{profileID}")
+    Call<NewMatch> addMatch(@Body NewMatch newMatch,@Path("profileID") int profileID);
 
 }

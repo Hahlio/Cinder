@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Signin extends AppCompatActivity {
-    public static final String BASE_URL = "http://52.183.2.222:8000/";
+    public static final String BASE_URL = "http://52.183.2.222/";
 
     static Retrofit getRetro(){
         Retrofit retrofit = new Retrofit.Builder()
@@ -36,7 +36,7 @@ public class Signin extends AppCompatActivity {
 
         final Button signinButton = findViewById(R.id.signinButton);
         final EditText usernameInput  = findViewById(R.id.usernameLogin);
-        final SharedPreferences mpref = PreferenceManager.getDefaultSharedPreferences(Signin.this);
+        final SharedPreferences mpref = getSharedPreferences("IDValue",0);
 
 
         signinButton.setOnClickListener(new View.OnClickListener() {
@@ -50,12 +50,9 @@ public class Signin extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ProfileID> call, Response<ProfileID> response) {
                         int profileID = response.body().getId();
-                        if(profileID==-1) {
-                            changeToProfileCreation();
-                        }else {
+                        if(!(profileID==-1)){
                             SharedPreferences.Editor editor = mpref.edit();
-                            editor.putInt("profileID", profileID).putBoolean("loggedIn",true).apply();;
-                            changeToMatchMaking();
+                            editor.putInt("profileID", profileID).putBoolean("loggedIn",true).apply();
                         }
                     }
 
@@ -64,6 +61,11 @@ public class Signin extends AppCompatActivity {
 
                     }
                 });
+
+                if(mpref.getBoolean("loggedIn",false))
+                    changeToMatchMaking();
+                else
+                    changeToProfileCreation();
             }
         });
 

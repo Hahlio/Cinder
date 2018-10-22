@@ -29,7 +29,7 @@ public class profileCreation extends AppCompatActivity {
         setContentView(R.layout.activity_profile_creation);
 
         final Button submitButton = findViewById(R.id.submitButton);
-        final SharedPreferences mpref = PreferenceManager.getDefaultSharedPreferences(profileCreation.this);
+        final SharedPreferences mpref = getSharedPreferences("IDValue",0);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,14 +43,13 @@ public class profileCreation extends AppCompatActivity {
                         int statusCode = response.code();
                         SharedPreferences.Editor editor = mpref.edit();
                         editor.putInt("profileID",response.body().getId()).apply();
-                        changeToMatchMaking();
                     }
                     @Override
                     public void onFailure(Call<ProfileID> call, Throwable t) {
 
                     }
                 });
-
+                changeToMatchMaking();
             }
         });
     }
@@ -66,7 +65,7 @@ public class profileCreation extends AppCompatActivity {
         final EditText course3 = findViewById(R.id.courseInput3);
         final EditText course4 = findViewById(R.id.courseInput4);
         final EditText course5 = findViewById(R.id.courseInput5);
-        final EditText username = findViewById(R.id.usernameLogin);
+        final EditText username = findViewById(R.id.usernameInput);
         final EditText uni = findViewById(R.id.uniInput);
         final EditText study = findViewById(R.id.studyLocationInput);
         final EditText interest = findViewById(R.id.interestInput);
@@ -80,6 +79,8 @@ public class profileCreation extends AppCompatActivity {
         newProfile.setCourses(course0.getText().toString()+","+course1.getText().toString()+
                 ","+course2.getText().toString()+","+course3.getText().toString()+
                 ","+course4.getText().toString()+","+course5.getText().toString());
+        newProfile.setLat((double) 0);
+        newProfile.setLng((double) 0);
         return newProfile;
     }
 
