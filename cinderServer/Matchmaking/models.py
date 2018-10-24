@@ -6,12 +6,12 @@ from django.db.models import Q
 from userprofile.models import Profile
 import math
 
-import ast, json
+import json
 
 class Match(models.Model):
-    user1 = models.ForeignKey(Profile, related_name = "user1", on_delete=models.DO_NOTHING)
-    user2 = models.ForeignKey(Profile, related_name = "user2", on_delete=models.DO_NOTHING)
-    score = models.IntegerField(default = 0)
+    user1 = models.ForeignKey(Profile, related_name="user1", on_delete=models.CASCADE)
+    user2 = models.ForeignKey(Profile, related_name="user2", on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
     # checks if this person has seen this match before
     hasMatched = models.BooleanField(default=False)
     # checks if this person accepted or declined the match.
@@ -24,7 +24,7 @@ class Match(models.Model):
         profile_set1 = Profile.objects.all()
         for userPro in profile_set1:
             if userPro.id != profile.id:
-                M1 = Match(user1 = userPro, user2 = profile, score = 0, hasMatched = False, accepted = False)
+                M1 = Match(user1=userPro, user2=profile, score=0, hasMatched=False, accepted=False)
                 M1.generate()
                 M1.save()
         return 0
@@ -55,11 +55,12 @@ class Match(models.Model):
             if self.user1.school == self.user2.school:
                 self.score += 50
     		# Arbitary preference match score
-            if self.user1.preferences == self.user2.preferences:
-                self.score += 30
+            preferences = len(set(self.user1.preferences.split(',')) & set(self.user2.preferences.split(',')))
+            self.score += 30 * preferences
+
     		# Arbitary interest match score
-            if self.user1.interests == self.user2.preferences:
-                self.score+= 10
+            interests = len(set(self.user1.interests.split(',')) & set(self.user2.interests.split(',')))
+            self.score+= 10 * interests
 
     		# distance formula based on longitude/latitude
             dlon = self.user1.lng - self.user2.lng
@@ -89,7 +90,6 @@ class Match(models.Model):
         retVal = {}
         profileList = []
 
-        # 
         matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
         for eachMatch in matchList:
             profileList.append(eachMatch.returnOtherMatch(p).id)
