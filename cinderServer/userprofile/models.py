@@ -1,6 +1,6 @@
 from django.db import models
 
-import ast, json
+import json
 
 class Profile(models.Model):
     name = models.CharField(default="John Doe", max_length=100)
@@ -49,8 +49,6 @@ class Profile(models.Model):
         p.preferences=x["preferences"]
         p.interests=x["interests"]
         p.save()
-        retval = {}
-        #retval["id"] = temp.id
         return p.inJson()
 
     def findID(user):
@@ -58,6 +56,6 @@ class Profile(models.Model):
         try:
             p = Profile.objects.get(username=user)
             retval["id"] = p.id
-        except:
+        except ObjectDoesNotExist:
             retval["id"] = -1
         return retval
