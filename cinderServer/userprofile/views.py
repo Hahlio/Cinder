@@ -1,7 +1,5 @@
-from django.shortcuts import render
-from django.db import models
 from threading import Thread
-from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseNotFound
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from .models import Profile
 from Matchmaking.models import Match
 
@@ -9,7 +7,7 @@ def profDetails(request, profile_id):
     if request.method == 'GET':
         try:
             p = Profile.objects.get(pk=profile_id)
-        except:
+        except ObjectDoesNotExist:
             retval1 = HttpResponse("User does not Exist", 404)
             return retval1
         retval = p.inJson()
