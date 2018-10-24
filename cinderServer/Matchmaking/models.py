@@ -6,7 +6,7 @@ from django.db.models import Q
 from userprofile.models import Profile
 import math
 
-import ast, json
+import json
 
 class Match(models.Model):
     user1 = models.ForeignKey(Profile, related_name="user1", on_delete=models.CASCADE)
@@ -90,7 +90,6 @@ class Match(models.Model):
         retVal = {}
         profileList = []
 
-        #
         matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
         for eachMatch in matchList:
             profileList.append(eachMatch.returnOtherMatch(p).id)
