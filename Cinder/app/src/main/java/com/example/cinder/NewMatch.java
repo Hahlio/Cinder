@@ -3,7 +3,7 @@ package com.example.cinder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class NewMatch {
+class NewMatch {
 
     @SerializedName("user1")
     @Expose

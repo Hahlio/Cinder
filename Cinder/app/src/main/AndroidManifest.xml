@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".profileCreation" />
         <activity android:name=".matchMaking"></activity>
+        <uses-permission android:name="android.permission.INTERNET" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
+
 
 </manifest>

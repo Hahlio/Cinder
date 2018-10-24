@@ -1,6 +1,7 @@
 package com.example.cinder;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,7 +21,7 @@ import static com.example.cinder.Signin.getRetro;
 
 public class matchMaking extends AppCompatActivity {
 
-    public static List<Integer> pmatches;
+    private static List<Integer> pmatches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +88,15 @@ public class matchMaking extends AppCompatActivity {
         Call<Profile> call = apiCalls.getProfile(profileID);
         call.enqueue(new Callback<Profile>() {
             @Override
-            public void onResponse(Call<Profile> call, Response<Profile> response) {
+            public void onResponse(@NonNull Call<Profile> call, @NonNull Response<Profile> response) {
                 Profile show = response.body();
-                nameDisplay.setText(show.getName());
+                nameDisplay.setText(Objects.requireNonNull(show).getName());
                 locationDisplay.setText(show.getLat() +", " + show.getLng());
                 courseDisplay.setText(show.getCourses());
             }
 
             @Override
-            public void onFailure(Call<Profile> call, Throwable t) {
+            public void onFailure(@NonNull Call<Profile> call, @NonNull Throwable t) {
 
             }
         });
@@ -121,10 +123,12 @@ public class matchMaking extends AppCompatActivity {
         Call<NewMatch> call = apiCalls.addMatch(newMatch,userID1);
         call.enqueue(new Callback<NewMatch>() {
             @Override
-            public void onResponse(Call<NewMatch> call, Response<NewMatch> response) {
+            public void onResponse(@NonNull Call<NewMatch> call, @NonNull Response<NewMatch> response) {
+                //no need for code here
             }
             @Override
-            public void onFailure(Call<NewMatch> call, Throwable t) {
+            public void onFailure(@NonNull Call<NewMatch> call, @NonNull Throwable t) {
+                //failure code to be written
             }
         });
 
@@ -135,14 +139,15 @@ public class matchMaking extends AppCompatActivity {
         Call<Matches> call = apiCalls.getMatches(profileID);
         call.enqueue(new Callback<Matches>() {
             @Override
-            public void onResponse(Call<Matches> call, Response<Matches> response) {
+            public void onResponse(@NonNull Call<Matches> call, @NonNull Response<Matches> response) {
                 pmatches=response.body().getMatches();
             }
 
             @Override
-            public void onFailure(Call<Matches> call, Throwable t) {
+            public void onFailure(@NonNull Call<Matches> call, @NonNull Throwable t) {
                 Log.d("error", "error");
             }
+
         });
     }
 
