@@ -15,15 +15,15 @@ def index(request):
 
 class matches(APIView):
 
-    def get(request, profile_id):
+    def get(self, request, profile_id):
     	profileList = returnListOfMatches(profile_id)
     	#serializer = ProfileListSerializer(profileList , many=True)
     	return Response(profileList, status=status.HTTP_200_OK)
 
-    def post(request, profile_id):
+    def post(self, request, profile_id):
     	return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(request, profile_id):
+    def put(self, request, profile_id):
         matched = returnMatch(request.data)
         serializer = MatchListSerializer(matched, data=request.data)
         if serializer.is_valid():
