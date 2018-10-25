@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
 
 import static com.example.cinder.Signin.getRetro;
 
-public class matchMaking extends AppCompatActivity {
+public class MatchMaking extends AppCompatActivity {
 
     private static List<Integer> pmatches;
 
@@ -84,7 +84,7 @@ public class matchMaking extends AppCompatActivity {
         final TextView locationDisplay = findViewById(R.id.locationDisplay);
         final TextView courseDisplay = findViewById(R.id.courseDisplay);
         Retrofit retrofit = getRetro();
-        restApiCalls apiCalls = retrofit.create(restApiCalls.class);
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<Profile> call = apiCalls.getProfile(profileID);
         call.enqueue(new Callback<Profile>() {
             @Override
@@ -97,7 +97,7 @@ public class matchMaking extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<Profile> call, @NonNull Throwable t) {
-
+                //failure code to be written
             }
         });
 
@@ -119,7 +119,7 @@ public class matchMaking extends AppCompatActivity {
         newMatch.setUser1(userID1);
         newMatch.setUser2(userID2);
         Retrofit retrofit = getRetro();
-        restApiCalls apiCalls = retrofit.create(restApiCalls.class);
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<NewMatch> call = apiCalls.addMatch(newMatch,userID1);
         call.enqueue(new Callback<NewMatch>() {
             @Override
@@ -135,7 +135,7 @@ public class matchMaking extends AppCompatActivity {
     }
     public void getMatches(int profileID) {
         Retrofit retrofit = getRetro();
-        restApiCalls apiCalls = retrofit.create(restApiCalls.class);
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<Matches> call = apiCalls.getMatches(profileID);
         call.enqueue(new Callback<Matches>() {
             @Override
