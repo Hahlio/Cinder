@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse, HttpRequest, JsonResponse
-from .models import Match
+from .models import Match, returnListOfMatches, returnMatch
 from .serializers import MatchListSerializer
 
 
@@ -16,7 +16,7 @@ def index(request):
 class matches(APIView):
 
     def get(request, profile_id):
-    	profileList = Match.returnListOfMatches(profile_id)
+    	profileList = returnListOfMatches(profile_id)
     	#serializer = ProfileListSerializer(profileList , many=True)
     	return Response(profileList, status=status.HTTP_200_OK)
 
@@ -24,7 +24,7 @@ class matches(APIView):
     	return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
     def put(request, profile_id):
-        matched = Match.returnMatch(request.data)
+        matched = returnMatch(request.data)
         serializer = MatchListSerializer(matched, data=request.data)
         if serializer.is_valid():
         	serializer.save()

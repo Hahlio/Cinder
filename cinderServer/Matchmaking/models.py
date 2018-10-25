@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import math
+
 from django.db import models
 from django.db.models import Q
 from userprofile.models import Profile
-import math
-
-import json
 
 class Match(models.Model):
     user1 = models.ForeignKey(Profile, related_name="user1", on_delete=models.CASCADE)
@@ -18,35 +17,17 @@ class Match(models.Model):
     # false also means user blocked.
     accepted = models.BooleanField(default=False)
 
-    # used when creating a new user.
-    def createMatch(profile):
-        #grabs all users
-        profile_set1 = Profile.objects.all()
-        for userPro in profile_set1:
-            if userPro.id != profile.id:
-                M1 = Match(user1=userPro, user2=profile, score=0, hasMatched=False, accepted=False)
-                M1.generate()
-                M1.save()
-        return 0
-
-    def updateMatch(profile):
-        matchList = Match.objects.all().filter(Q(user1__exact=profile)|Q(user2__exact=profile)).filter(hasMatched=False)
-        for matches in matchList:
-                matches.generate()
-                matches.save()
-        return 0
-
-    def isMatch(profile):
-    	if (user1 == profile) or (user2 == profile):
-    		return True
-    	else:
-    		return False
+    def isMatch(self, profile):
+        if (self.user1 == profile) or (self.user2 == profile):
+            return True
+        else:
+            return False
 
     def returnOtherMatch(self, profile):
-    	if self.user1 == profile:
-    		return self.user2
-    	else:
-    		return self.user1
+        if self.user1 == profile:
+            return self.user2
+        else:
+            return self.user1
 
     def generate(self):
         self.score = 0
@@ -60,13 +41,13 @@ class Match(models.Model):
 
     		# Arbitary interest match score
             interests = len(set(self.user1.interests.split(',')) & set(self.user2.interests.split(',')))
-            self.score+= 10 * interests
+            self.score += 10 * interests
 
     		# distance formula based on longitude/latitude
             dlon = self.user1.lng - self.user2.lng
             dlat = self.user1.lat - self.user2.lat
             a = (math.sin(math.radians(dlat/2)))**2 + math.cos(math.radians(self.user1.lat)) * math.cos(math.radians(self.user1.lat)) * (math.sin(math.radians(dlon/2)))**2
-            c = 2 * math.atan2( math.sqrt(a), math.sqrt(1-a) )
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     		# 6371 is raidus of earth in KM
     		# d is kilometers apart.
             d = c * 6371
@@ -82,28 +63,45 @@ class Match(models.Model):
 
         return self.score
 
-    def returnListOfMatches(profile_id):
-        p = Profile.objects.get(pk=profile_id)
+def updateMatch(profile):
+    matchList = Match.objects.all().filter(Q(user1__exact=profile)|Q(user2__exact=profile)).filter(hasMatched=False)
+    for matches in matchList:
+        matches.generate()
+        matches.save()
+    return 0
 
-        # Grabs all that are not matched, score greater than 0, ordered by decreasing order.
-        # give only last 5.
-        retVal = {}
-        profileList = []
+def returnMatch(request):
+    p1 = Profile.objects.get(pk=request["user1"])
+    p2 = Profile.objects.get(pk=request["user2"])
 
-        matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
-        for eachMatch in matchList:
-            profileList.append(eachMatch.returnOtherMatch(p).id)
-        	#profileList.append(Match.returnOtherMatch(p))
+    match = Match.objects.all().filter(Q(user1__exact=p1)|Q(user2__exact=p1)).filter(Q(user1__exact=p2)|Q(user2__exact=p2)).first()
 
-        retVal["Matches"] = profileList
-        #matchList.returnOtherMatch(p).id
-        return retVal
+    return match
 
+def returnListOfMatches(profile_id):
+    p = Profile.objects.get(pk=profile_id)
 
-    def returnMatch(x):
-        p1 = Profile.objects.get(pk=x["user1"])
-        p2 = Profile.objects.get(pk=x["user2"])
+    # Grabs all that are not matched, score greater than 0, ordered by decreasing order.
+    # give only last 5.
+    retVal = {}
+    profileList = []
 
-        match = Match.objects.all().filter(Q(user1__exact=p1)|Q(user2__exact=p1)).filter(Q(user1__exact=p2)|Q(user2__exact=p2)).first()
+    matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
+    for eachMatch in matchList:
+        profileList.append(eachMatch.returnOtherMatch(p).id)
+        #profileList.append(Match.returnOtherMatch(p))
 
-        return match
+    retVal["Matches"] = profileList
+    #matchList.returnOtherMatch(p).id
+    return retVal
+
+ # used when creating a new user.
+def createMatch(profile):
+    #grabs all users
+    profile_set1 = Profile.objects.all()
+    for userPro in profile_set1:
+        if userPro.id != profile.id:
+            M1 = Match(user1=userPro, user2=profile, score=0, hasMatched=False, accepted=False)
+            M1.generate()
+            M1.save()
+    return 0

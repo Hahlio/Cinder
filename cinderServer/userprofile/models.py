@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 
 import json
 
@@ -27,35 +28,35 @@ class Profile(models.Model):
         retval["interests"] = self.interests
         return retval
 
-    def createProfile(x):
-        x = x.decode("utf-8")
-        x = json.loads(x)
-        temp = Profile(name=x["name"],username=x["username"],lat=x["lat"],lng=x["lng"],school=x["school"],courses=x["courses"],preferences=x["preferences"],interests=x["interests"])
-        temp.save()
-        retval = {}
-        retval["id"] = temp.id
-        return retval
+def createProfile(jsonArguments):
+    jsonArguments = jsonArguments.decode("utf-8")
+    args = json.loads(jsonArguments)
+    temp = Profile(name=args["name"],username=args["username"],lat=args["lat"],lng=args["lng"],school=args["school"],courses=args["courses"],preferences=args["preferences"],interests=args["interests"])
+    temp.save()
+    retval = {}
+    retval["id"] = temp.id
+    return retval
 
-    def modifyProfile(x, profile_id):
-        p = Profile.objects.get(pk=profile_id)
-        x = x.decode("utf-8")
-        x = json.loads(x)
-        p.name=x["name"]
-        p.username=x["username"]
-        p.lat=x["lat"]
-        p.lng=x["lng"]
-        p.school=x["school"]
-        p.courses=x["courses"]
-        p.preferences=x["preferences"]
-        p.interests=x["interests"]
-        p.save()
-        return p.inJson()
+def findID(user):
+    retval = {}
+    try:
+        p = Profile.objects.get(username=user)
+        retval["id"] = p.id
+    except ObjectDoesNotExist:
+        retval["id"] = -1
+    return retval
 
-    def findID(user):
-        retval = {}
-        try:
-            p = Profile.objects.get(username=user)
-            retval["id"] = p.id
-        except ObjectDoesNotExist:
-            retval["id"] = -1
-        return retval
+def modifyProfile(jsonArgs, profile_id):
+    prof = Profile.objects.get(pk=profile_id)
+    jsonArgs = jsonArgs.decode("utf-8")
+    args = json.loads(jsonArgs)
+    prof.name=args["name"]
+    prof.username=args["username"]
+    prof.lat=args["lat"]
+    prof.lng=args["lng"]
+    prof.school=args["school"]
+    prof.courses=args["courses"]
+    prof.preferences=args["preferences"]
+    prof.interests=args["interests"]
+    prof.save()
+    return prof.inJson()
