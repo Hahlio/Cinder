@@ -58,7 +58,7 @@ public class Signin extends AppCompatActivity {
                 });
                 thread.start();
                 Retrofit retrofit = getRetro();
-                restApiCalls apiCalls = retrofit.create(restApiCalls.class);
+                RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
                 String username = usernameInput.getText().toString();
                 Call<ProfileID> call = apiCalls.getProfileID(username);
                 call.enqueue(new Callback<ProfileID>() {
@@ -89,11 +89,11 @@ public class Signin extends AppCompatActivity {
 
     }
     public void changeToMatchMaking(){
-        Intent intent = new Intent(this, matchMaking.class);
+        Intent intent = new Intent(this, MatchMaking.class);
         startActivity(intent);
     }
     public void changeToProfileCreation(){
-        Intent intent = new Intent(this, profileCreation.class);
+        Intent intent = new Intent(this, ProfileCreation.class);
         startActivity(intent);
     }
 }

@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
 import static com.example.cinder.Signin.getRetro;
 
 
-public class profileCreation extends AppCompatActivity {
+public class ProfileCreation extends AppCompatActivity {
 
 
     @Override
@@ -33,7 +33,7 @@ public class profileCreation extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Retrofit retrofit = getRetro();
-                restApiCalls apiCalls = retrofit.create(restApiCalls.class);
+                RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
                 Profile newProfile= createProfile();
                 Call<ProfileID> call = apiCalls.createProfile(newProfile);
                 call.enqueue(new Callback<ProfileID>() {
@@ -52,7 +52,7 @@ public class profileCreation extends AppCompatActivity {
         });
     }
     private void changeToMatchMaking(){
-        Intent intent = new Intent(this, matchMaking.class);
+        Intent intent = new Intent(this, MatchMaking.class);
         startActivity(intent);
     }
 
