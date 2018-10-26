@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse, HttpRequest, JsonResponse
-from .models import Match, returnListOfMatches, returnMatch
+from django.http import HttpResponse
+from .models import returnListOfMatches, returnMatch
 from .serializers import MatchListSerializer
 
 
@@ -15,18 +14,18 @@ def index(request):
 
 class matches(APIView):
 
-    def get(request, profile_id):
-    	profileList = returnListOfMatches(profile_id)
+    def get(self, request, profile_id):
+        profileList = returnListOfMatches(profile_id)
     	#serializer = ProfileListSerializer(profileList , many=True)
-    	return Response(profileList, status=status.HTTP_200_OK)
+        return Response(profileList, status=status.HTTP_200_OK)
 
-    def post(request, profile_id):
-    	return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, profile_id):
+        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(request, profile_id):
+    def put(self, request, profile_id):
         matched = returnMatch(request.data)
         serializer = MatchListSerializer(matched, data=request.data)
         if serializer.is_valid():
-        	serializer.save()
-        	return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
