@@ -71,6 +71,10 @@ def lookupUser(request, user):
     retval = {}
     if request.method == 'GET':
         retval = findID(user)
+        if not validID(retval["id"]):
+            code = 404
+            retval["status"] = 404
+            retval["userMessage"] = "The user does not exists"
     else:
         code = 405
         retval["status"] = 405
