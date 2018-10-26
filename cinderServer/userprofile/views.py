@@ -60,9 +60,9 @@ def createProf(request):
         thread = Thread(target=createMatch, args=(Profile.objects.get(pk=retval["id"]),))
         thread.start()    
     else:
-        code = 404
+        code = 405
         retval = {}
-        retval["status"] = 404
+        retval["status"] = 405
         retval["userMessage"] = "The requested method is not allowed"
     return JsonResponse(retval, status=code)
 
@@ -75,8 +75,8 @@ def lookupUser(request, user):
     if request.method == 'GET':
         retval = findID(user)
     else:
-        code = 404
+        code = 405
         retval = {}
-        retval["status"] = 404
+        retval["status"] = 405
         retval["userMessage"] = "The requested method is not allowed"
     return JsonResponse(retval, status=code)
