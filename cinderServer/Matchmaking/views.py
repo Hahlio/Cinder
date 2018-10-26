@@ -7,6 +7,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from .models import returnListOfMatches, returnMatch
 from .serializers import MatchListSerializer
+from userprofile.models import Profile
 
 
 def index(request):
@@ -31,7 +32,7 @@ class matches(APIView):
             serializer = MatchListSerializer(matched, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(request.data, status=status.HTTP_404_NOT_FOUND)
