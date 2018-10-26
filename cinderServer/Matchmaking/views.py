@@ -16,7 +16,6 @@ class matches(APIView):
 
     def get(self, request, profile_id):
         profileList = returnListOfMatches(profile_id)
-    	#serializer = ProfileListSerializer(profileList , many=True)
         return Response(profileList, status=status.HTTP_200_OK)
 
     def post(self, request, profile_id):
