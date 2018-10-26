@@ -16,13 +16,13 @@ def profDetails(request, profile_id):
     Methods used when the profile already exists
     GET: gets the profile details
     PUT: updates the profile (MUST SEND VALUES WHICH ARE NOT CHANGED ALSO)
-    DELETE: removes the profile and also the matches associated with it 
+    DELETE: removes the profile and also the matches associated with it
     """
     # Tries to retreive the profile before executing anything
     code = 200
+    retval = {}
     try:
         p = Profile.objects.get(pk=profile_id)
-
         if request.method == 'GET':
             retval = p.inJson()
             return JsonResponse(retval)
@@ -34,16 +34,14 @@ def profDetails(request, profile_id):
         elif request.method == 'DELETE':
             Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).delete()
             p.delete()
-            retval = {}
+            retval["success"] = 1
         else:
             code = 405
-            retval = {}
             retval["status"] = 405
             retval["userMessage"] = "The requested method is not allowed"
 
     except ObjectDoesNotExist:
         code = 404
-        retval = {}
         retval["status"] = 404
         retval["userMessage"] = "The profile you requested does not exist"
     return JsonResponse(retval, status=code)
@@ -51,17 +49,17 @@ def profDetails(request, profile_id):
 def createProf(request):
     """
     Methods used when the profile doesn't exist
-    POST: Used to create a new profile 
+    POST: Used to create a new profile
     """
     code = 200
+    retval = {}
     if request.method == 'POST':
         retval = createProfile(request.body)
         # Updates the matchmaking algorithm in the background
         thread = Thread(target=createMatch, args=(Profile.objects.get(pk=retval["id"]),))
-        thread.start()    
+        thread.start()
     else:
         code = 405
-        retval = {}
         retval["status"] = 405
         retval["userMessage"] = "The requested method is not allowed"
     return JsonResponse(retval, status=code)
@@ -72,11 +70,11 @@ def lookupUser(request, user):
     GET: Used to find the ID of the username
     """
     code = 200
+    retval = {}
     if request.method == 'GET':
         retval = findID(user)
     else:
         code = 405
-        retval = {}
         retval["status"] = 405
         retval["userMessage"] = "The requested method is not allowed"
     return JsonResponse(retval, status=code)
