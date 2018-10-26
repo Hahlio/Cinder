@@ -28,14 +28,17 @@ class Profile(models.Model):
         retval["interests"] = self.interests
         return retval
 
-def createProfile(jsonArguments):
-    jsonArguments = jsonArguments.decode("utf-8")
-    args = json.loads(jsonArguments)
-    temp = Profile(name=args["name"],username=args["username"],lat=args["lat"],lng=args["lng"],school=args["school"],courses=args["courses"],preferences=args["preferences"],interests=args["interests"])
-    temp.save()
-    retval = {}
-    retval["id"] = temp.id
-    return retval
+def validID(userID):
+    """
+    Checks if the ID is valid and exists inside the database
+    userID: the ID you want to check
+    """
+    try:
+        Profile.objects.get(pk=userID)
+        return True
+    except ObjectDoesNotExist:
+        return False
+    return False
 
 def findID(user):
     retval = {}
@@ -44,6 +47,15 @@ def findID(user):
         retval["id"] = p.id
     except ObjectDoesNotExist:
         retval["id"] = -1
+    return retval
+
+def createProfile(jsonArguments):
+    jsonArguments = jsonArguments.decode("utf-8")
+    args = json.loads(jsonArguments)
+    temp = Profile(name=args["name"],username=args["username"],lat=args["lat"],lng=args["lng"],school=args["school"],courses=args["courses"],preferences=args["preferences"],interests=args["interests"])
+    temp.save()
+    retval = {}
+    retval["id"] = temp.id
     return retval
 
 def modifyProfile(jsonArgs, profile_id):
