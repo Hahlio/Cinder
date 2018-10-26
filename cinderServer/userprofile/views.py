@@ -4,12 +4,11 @@ The details of the profile can be accessed from here, as well
 as searching for the ID of the profile and creation of profiles.
 """
 from threading import Thread
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.db.models import Q
 from Matchmaking.models import Match, updateMatch, createMatch
 
-from .models import Profile, modifyProfile, createProfile, findID
+from .models import Profile, modifyProfile, createProfile, findID, validID
 
 def profDetails(request, profile_id):
     """
@@ -21,7 +20,7 @@ def profDetails(request, profile_id):
     # Tries to retreive the profile before executing anything
     code = 200
     retval = {}
-    try:
+    if validID(profile_id):
         p = Profile.objects.get(pk=profile_id)
         if request.method == 'GET':
             retval = p.inJson()
@@ -39,8 +38,7 @@ def profDetails(request, profile_id):
             code = 405
             retval["status"] = 405
             retval["userMessage"] = "The requested method is not allowed"
-
-    except ObjectDoesNotExist:
+    else:
         code = 404
         retval["status"] = 404
         retval["userMessage"] = "The profile you requested does not exist"
@@ -73,6 +71,10 @@ def lookupUser(request, user):
     retval = {}
     if request.method == 'GET':
         retval = findID(user)
+        if not validID(retval["id"]):
+            code = 404
+            retval["status"] = 404
+            retval["userMessage"] = "The user does not exists"
     else:
         code = 405
         retval["status"] = 405
