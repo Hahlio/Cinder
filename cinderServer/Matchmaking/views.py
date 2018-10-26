@@ -15,16 +15,26 @@ def index(request):
 class matches(APIView):
 
     def get(self, request, profile_id):
-        profileList = returnListOfMatches(profile_id)
-        return Response(profileList, status=status.HTTP_200_OK)
+        if validID(profile_id):
+            profileList = returnListOfMatches(profile_id)
+            return Response(profileList, status=status.HTTP_200_OK)
+        else:
+            return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+        
 
     def post(self, request, profile_id):
-        return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def put(self, request, profile_id):
-        matched = returnMatch(request.data)
-        serializer = MatchListSerializer(matched, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if validID(profile_id):
+            matched = returnMatch(request.data)
+            serializer = MatchListSerializer(matched, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, profile_id):
+        return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
