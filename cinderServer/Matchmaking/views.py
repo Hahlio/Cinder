@@ -21,8 +21,8 @@ class matches(APIView):
             return Response(profileList, status=status.HTTP_200_OK)
         else:
             return Response(request.data, status=status.HTTP_404_NOT_FOUND)
-        
 
+    @classmethod
     def post(self, request, profile_id):
         return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -37,5 +37,6 @@ class matches(APIView):
         else:
             return Response(request.data, status=status.HTTP_404_NOT_FOUND)
 
+    @classmethod
     def delete(self, request, profile_id):
         return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
