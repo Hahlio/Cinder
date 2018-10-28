@@ -7,7 +7,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from .models import returnListOfMatches, returnMatch
 from .serializers import MatchListSerializer
-from userprofile.models import Profile
+from userprofile.models import validID
 
 
 def index(request):
