@@ -39,9 +39,9 @@ class Profile(models.Model):
     def login(self, json_arg):
         """
         Checks if the user credentials match the ones stored on the server
-        json_arg: the arguments of the function
-            MUST CONTAIN: password - the password to the user's account
-            MUST CONTAIN: deviceid - the unique deviceid
+            json_arg: the arguments of the function
+                MUST CONTAIN: password - the password to the user's account
+                MUST CONTAIN: deviceid - the unique deviceid
         Returns dictionary with success true and a hashcode to authenticate further actions if
         logged in else returns success false
         """
@@ -63,7 +63,8 @@ class Profile(models.Model):
     def authenticate(self, hashcode, deviceid):
         """
         Checks if the user is logged in and has correct hashcode
-        hashcode: the hashcode they get during login
+            hashcode: the hashcode they get during login
+            deviceid: the device they are currently logged in from
         Returns true if logged in with correct credentials and false otherwise
         """
         check = hashlib.sha1()
@@ -75,8 +76,8 @@ class Profile(models.Model):
     def logout(self, hashcode, deviceid):
         """
         Logs the user out
-        hashcode: the hashcode they get during login
-
+            hashcode: the hashcode they get during login
+            deviceid: the device they are currently logged in from
         returns dictionary with success true if successful otherwise false
         """
         retval = {}
