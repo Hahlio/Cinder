@@ -49,9 +49,7 @@ def findID(user):
         retval["id"] = -1
     return retval
 
-def createProfile(jsonArguments):
-    jsonArguments = jsonArguments.decode("utf-8")
-    args = json.loads(jsonArguments)
+def createProfile(args):
     temp = Profile(name=args["name"],username=args["username"],lat=args["lat"],lng=args["lng"],school=args["school"],courses=args["courses"],preferences=args["preferences"],interests=args["interests"])
     temp.save()
     retval = {}

@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from django.urls import reverse,resolve
 
-from django.test import TestCase
+class TestMatchmaking:
 
-# Create your tests here.
+    def test_Matches_url(self):
+        path = reverse('matchmaking', kwargs={'profile_id' : 1})
+        assert resolve(path).view_name == 'matchmaking'
 
-
-from django.http import HttpResponse
-
-
-def index(request):
-    return HttpResponse("Hello, world. This is at matchmaking index")
+        

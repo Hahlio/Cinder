@@ -52,7 +52,9 @@ def createProf(request):
     code = 200
     retval = {}
     if request.method == 'POST':
-        retval = createProfile(request.body)
+        jsonArguments = request.body.decode("utf-8")
+        args = json.loads(jsonArguments)
+        retval = createProfile(args)
         # Updates the matchmaking algorithm in the background
         thread = Thread(target=createMatch, args=(Profile.objects.get(pk=retval["id"]),))
         thread.start()

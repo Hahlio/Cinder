@@ -7,5 +7,5 @@ urlpatterns = [
     # /Matchmaking
     path('', views.index, name='index'),
     # /Matchmaking/id
-    path('<int:profile_id>',views.matches.as_view()),
+    path('<int:profile_id>',views.matches.as_view(), name="matchmaking"),
 ]
