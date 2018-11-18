@@ -11,7 +11,6 @@ matrix:
         - sudo apt-get install unixodbc unixodbc-dev
         - sudo curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add
         - sudo curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee -a /etc/apt/sources.list.d/mssql-release.list 
-        - exit
         - sudo apt-get update
         - sudo ACCEPT_EULA=Y apt-get install msodbcsql17
         - pip install -r requirements.txt
