@@ -47,7 +47,7 @@ testProfiles[1]["deviceid"] = "Android1"
 testProfiles[1]["lat"] = 20.321
 testProfiles[1]["lng"] = 80.000
 testProfiles[1]["school"] = "Plebian school"
-testProfiles[1]["courses"] = "CPEN311, CPEN321, ELEC221"
+testProfiles[1]["courses"] = "CPEN311, CPEN321, ELEC221, CPEN 331"
 testProfiles[1]["preferences"] = "Group Discussion"
 testProfiles[1]["interests"] = "Animal Videos"
 
@@ -215,7 +215,7 @@ class TestModels:
     def test_ten_matches(self):
         test = {}
         uid = {}
-        for x in range(0, 9):
+        for x in range(0, 10):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
@@ -226,9 +226,9 @@ class TestModels:
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount
 
-        test[11] = createProfile(testProfiles[11])
-        uid[11] = test[11]["id"]
-        createMatch(Profile.objects.get(pk=uid[11]))
+        test[10] = createProfile(testProfiles[10])
+        uid[10] = test[10]["id"]
+        createMatch(Profile.objects.get(pk=uid[10]))
 
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount
@@ -241,7 +241,7 @@ class TestModels:
     def test_match_dec(self):
         test = {}
         uid = {}
-        for x in range(0, 9):
+        for x in range(0, 10):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
@@ -263,7 +263,7 @@ class TestModels:
     def test_same_matches(self):
         test = {}
         uid = {}
-        for x in range(0, 9):
+        for x in range(0, 10):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
@@ -291,7 +291,7 @@ class TestModels:
     def test_diff_matches(self):
         test = {}
         uid = {}
-        for x in range(0, 5):
+        for x in range(0, 6):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
