@@ -8,7 +8,7 @@ matrix:
       before_script:
         - cd Cinder/cinderServer
       install:
-
+	- sudo apt-get install unixodbc unixodbc-dev
         - pip install -r requirements.txt
       # command to run tests
       script:

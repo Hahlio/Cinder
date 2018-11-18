@@ -276,6 +276,11 @@ class TestModels:
         for x in range(0, listAmount - 1):
             assert testIDs[x] == matchList["Matches"][x]
 
+        matchList = returnListOfMatches(uid[0])
+
+        for x in range(0, listAmount - 1):
+            assert testIDs[x] == matchList["Matches"][x]
+
 # Application request for matches and receives 10 different matches. (Tests that if new users are added or user has accepted/declined matches, his match list is updated.)
     def test_diff_matches(self):
 
