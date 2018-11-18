@@ -40,5 +40,6 @@ matrix:
         # Emulator Management: Create, Start and Wait
       before_script:
         - cd Cinder/Cinder
+	- chmod +x gradlew
       install:
         - ./gradlew build connectedCheck
