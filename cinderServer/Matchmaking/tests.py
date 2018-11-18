@@ -316,6 +316,12 @@ class TestModels:
 """
 # Application accepts the match (Tests core functionality)
     def test_accept_matches(self):
+        test = {}
+        uid = {}
+        for x in range(0, 5):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
 
 # Application declines the match (Tests core functionality)
     def test_decline_matches(self):

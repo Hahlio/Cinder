@@ -6,7 +6,7 @@ matrix:
         - "3.6"
       # command to install dependencies
       before_script:
-        - cd Cinder/cinderServer
+        - cd cinderServer
       install:
         - sudo apt-get install unixodbc unixodbc-dev
         - pip install -r requirements.txt
