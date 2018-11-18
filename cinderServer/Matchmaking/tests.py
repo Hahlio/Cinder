@@ -215,7 +215,7 @@ class TestModels:
     def test_ten_matches(self):
         test = {}
         uid = {}
-        for x in range(0, 10):
+        for x in range(0, 9):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
@@ -226,9 +226,9 @@ class TestModels:
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount
 
-        test[x] = createProfile(testProfiles[x])
-            uid[x] = test[x]["id"]
-            createMatch(Profile.objects.get(pk=uid[x]))
+        test[11] = createProfile(testProfiles[11])
+        uid[11] = test[11]["id"]
+        createMatch(Profile.objects.get(pk=uid[11]))
 
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount
@@ -241,7 +241,7 @@ class TestModels:
     def test_match_dec(self):
         test = {}
         uid = {}
-        for x in range(0, 11):
+        for x in range(0, 9):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
@@ -263,7 +263,7 @@ class TestModels:
     def test_same_matches(self):
         test = {}
         uid = {}
-        for x in range(0, 11):
+        for x in range(0, 9):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
@@ -286,7 +286,7 @@ class TestModels:
             assert testIDs[x] == matchList["Matches"][x]
 
             
-"""
+
 # Application request for matches and receives 10 different matches. (Tests that if new users are added or user has accepted/declined matches, his match list is updated.)
     def test_diff_matches(self):
         test = {}
@@ -304,13 +304,16 @@ class TestModels:
             testIDs[x] = matchList["Matches"][x]
 
         test[6] = createProfile(testProfiles[6])
-            uid[6] = test[6]["id"]
-            createMatch(Profile.objects.get(pk=uid[6]))
+        uid[6] = test[6]["id"]
+        createMatch(Profile.objects.get(pk=uid[6]))
             
         matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
 
-        
+        assert testIDs[0] == matchList["Matches"][0]
 
+
+"""
 # Application accepts the match (Tests core functionality)
     def test_accept_matches(self):
 
