@@ -177,6 +177,8 @@ testProfiles[10]["courses"] = "CPEN311, CPEN321"
 testProfiles[10]["preferences"] = "Quiet Study"
 testProfiles[10]["interests"] = "Animal Videos"
 
+listAmount = 5
+
 
 @pytest.mark.django_db
 class TestModels:
@@ -219,16 +221,16 @@ class TestModels:
             createMatch(Profile.objects.get(pk=uid[x]))
         
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == 5
+        assert len(matchList["Matches"]) == listAmount
 
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == 5
+        assert len(matchList["Matches"]) == listAmount
 
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == 5
+        assert len(matchList["Matches"]) == listAmount
 
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == 5
+        assert len(matchList["Matches"]) == listAmount
 
 
 # Application requests matches and the 10 results are decreasing from the highest score (Testing Core functionality)
@@ -241,13 +243,13 @@ class TestModels:
             createMatch(Profile.objects.get(pk=uid[x]))
         
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == 5
+        assert len(matchList["Matches"]) == listAmount
         
         testIDs = {}
-        for x in range(0, 4):
+        for x in range(0, listAmount-1):
             testIDs[x] = matchList["Matches"][x]
 
-        for x in range(0,3):
+        for x in range(0, listAmount-2):
             assert testIDs[x] >= testIDs[x+1]
         
 
@@ -263,14 +265,16 @@ class TestModels:
             createMatch(Profile.objects.get(pk=uid[x]))
         
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == 5
+        assert len(matchList["Matches"]) == listAmount
         
         testIDs = {}
-        for x in range(0, 4):
+        for x in range(0, listAmount - 1):
             testIDs[x] = matchList["Matches"][x]
 
-        for x in range(0,3):
-            assert testIDs[x] >= testIDs[x+1]
+        matchList = returnListOfMatches(uid[0])
+
+        for x in range(0, listAmount - 1):
+            assert testIDs[x] == matchList["Matches"][x]
 
 # Application request for matches and receives 10 different matches. (Tests that if new users are added or user has accepted/declined matches, his match list is updated.)
     def test_diff_matches(self):
