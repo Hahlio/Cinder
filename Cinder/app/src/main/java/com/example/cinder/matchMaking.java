@@ -22,6 +22,7 @@ import static com.example.cinder.Signin.getRetro;
 public class MatchMaking extends AppCompatActivity {
 
     private static List<Integer> pmatches;
+    private String hash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class MatchMaking extends AppCompatActivity {
         final SharedPreferences mpref = getSharedPreferences("IDValue",0);
 
         final int profileID = mpref.getInt("profileID",0);
+        hash=mpref.getString("hash","");
         getMatches(profileID);
 
         Thread thread = new Thread(new Runnable(){
@@ -92,7 +94,7 @@ public class MatchMaking extends AppCompatActivity {
                 Profile show = response.body();
                 nameDisplay.setText(Objects.requireNonNull(show).getName());
                 locationDisplay.setText(show.getLat() +", " + show.getLng());
-                courseDisplay.setText(show.getCourses());
+                courseDisplay.setText(show.getCourses().replaceAll(",", " "));
             }
 
             @Override

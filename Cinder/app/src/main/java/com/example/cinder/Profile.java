@@ -29,6 +29,12 @@ public class Profile{
     @SerializedName("interests")
     @Expose
     private String interests;
+    @SerializedName("password")
+    @Expose
+    private String password;
+    @SerializedName("deviceid")
+    @Expose
+    private String deviceid;
 
     public String getUsername() {
         return username;
@@ -90,6 +96,22 @@ public class Profile{
 
     public void setInterests(String interests) {
         this.interests = interests;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDeviceid() {
+        return deviceid;
+    }
+
+    public void setDeviceid(String deviceid) {
+        this.deviceid = deviceid;
     }
 
 }
