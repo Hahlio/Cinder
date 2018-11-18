@@ -3,7 +3,7 @@ import hashlib
 import time
 
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 class Profile(models.Model):
     name = models.CharField(default="John Doe", max_length=100)
@@ -36,7 +36,7 @@ class Profile(models.Model):
         retval["interests"] = self.interests
         return retval
 
-    def login(self, json_arg):
+    def login(self, args):
         """
         Checks if the user credentials match the ones stored on the server
             json_arg: the arguments of the function
@@ -47,17 +47,18 @@ class Profile(models.Model):
         """
         retval = {}
         retval["success"] = False
-        json_arg = json_arg.decode("utf-8")
-        args = json.loads(json_arg)
+        retval["hash"] = -1
         if self.password == args["password"]:
             hashed = hashlib.sha1()
             hashed.update(str(time.time()).encode('utf-8'))
             self.currentHash = hashed.hexdigest()
-            self.loggedin = True
             retval["success"] = True
             retval["hash"] = self.currentHash
-            hashed.update(self.currentHash + args["deviceid"])
+            hashed = hashlib.sha1()
+            hashed.update(str(str(self.currentHash) + args["deviceid"]).encode('utf-8'))
+            self.loggedin = True
             self.currentHash = hashed.hexdigest()
+            self.save()
         return retval
 
     def authenticate(self, hashcode, deviceid):
@@ -68,7 +69,7 @@ class Profile(models.Model):
         Returns true if logged in with correct credentials and false otherwise
         """
         check = hashlib.sha1()
-        check.update(hashcode + deviceid)
+        check.update(str(hashcode + deviceid).encode('utf-8'))
         if self.loggedin and self.currentHash == check.hexdigest():
             return True
         return False
@@ -83,10 +84,11 @@ class Profile(models.Model):
         retval = {}
         retval["success"] = False
         check = hashlib.sha1()
-        check.update(hashcode + deviceid)
+        check.update(str(hashcode + deviceid).encode('utf-8'))
         if self.loggedin and self.currentHash == check.hexdigest():
             self.loggedin = False
             retval["success"] = True
+            self.save()
         return retval
 
 def validID(userID):
@@ -99,7 +101,6 @@ def validID(userID):
         return True
     except ObjectDoesNotExist:
         return False
-    return False
 
 def findID(user):
     retval = {}
@@ -108,6 +109,8 @@ def findID(user):
         retval["id"] = p.id
     except ObjectDoesNotExist:
         retval["id"] = -1
+    except MultipleObjectsReturned:
+        retval["id"] = -2
     return retval
 
 def createProfile(args):
@@ -116,14 +119,18 @@ def createProfile(args):
                    courses=args["courses"], preferences=args["preferences"], \
                    interests=args["interests"])
     temp.save()
+    creds = {}
+    creds["password"] = args["password"]
+    creds["deviceid"] = args["deviceid"]
+    hashret = temp.login(creds)
     retval = {}
     retval["id"] = temp.id
+    retval["hash"] = hashret["hash"]
     return retval
 
-def modifyProfile(jsonArgs, profile_id):
+def modifyProfile(args, profile_id):
     prof = Profile.objects.get(pk=profile_id)
-    jsonArgs = jsonArgs.decode("utf-8")
-    args = json.loads(jsonArgs)
+    
     prof.name = args["name"]
     prof.username = args["username"]
     prof.lat = args["lat"]

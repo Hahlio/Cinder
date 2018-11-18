@@ -3,6 +3,8 @@ Views used for accessing the representation of Profiles.
 The details of the profile can be accessed from here, as well
 as searching for the ID of the profile and creation of profiles.
 """
+import json
+
 from threading import Thread
 from django.http import JsonResponse
 from django.db.models import Q
@@ -26,7 +28,9 @@ def profDetails(request, profile_id):
             retval = p.inJson()
             return JsonResponse(retval)
         elif request.method == 'PUT':
-            retval = modifyProfile(request.body, profile_id)
+            jsonArgs = request.body.decode("utf-8")
+            args = json.loads(jsonArgs)
+            retval = modifyProfile(args, profile_id)
             # Updates the matchmaking algorithm in the background
             thread = Thread(target=updateMatch, args=(Profile.objects.get(pk=retval["id"]),))
             thread.start()
@@ -54,31 +58,47 @@ def createProf(request):
     if request.method == 'POST':
         jsonArguments = request.body.decode("utf-8")
         args = json.loads(jsonArguments)
-        retval = createProfile(args)
-        # Updates the matchmaking algorithm in the background
-        thread = Thread(target=createMatch, args=(Profile.objects.get(pk=retval["id"]),))
-        thread.start()
+        if findID(args["username"])["id"] != -1:
+            code = 406
+            retval["status"] = 406
+            retval["userMessage"] = "Username already exists"
+        else:
+            retval = createProfile(args)
+            # Updates the matchmaking algorithm in the background
+            thread = Thread(target=createMatch, args=(Profile.objects.get(pk=retval["id"]),))
+            thread.start()
     else:
         code = 405
         retval["status"] = 405
         retval["userMessage"] = "The requested method is not allowed"
     return JsonResponse(retval, status=code)
 
-def lookupUser(request, user):
+def lookupUser(request):
     """
     Methods used when the profile ID isn't known
     GET: Used to find the ID of the username
     """
     code = 200
     retval = {}
-    if request.method == 'GET':
-        retval = findID(user)
+    if request.method == 'PUT':
+        jsonArguments = request.body.decode("utf-8")
+        args = json.loads(jsonArguments)
+        retval = findID(args["username"])
+        uid = retval["id"]
         if not validID(retval["id"]):
-            code = 404
-            retval["status"] = 404
-            retval["userMessage"] = "The user does not exists"
+            #code = 404
+            #retval["status"] = 404
+            retval["hash"] = -1
+            #retval["userMessage"] = "The user does not exists"
+        else:
+            largs = {}
+            largs["password"] = args["password"]
+            largs["deviceid"] = args["deviceid"]
+            p = Profile.objects.get(pk=retval["id"])
+            retval = p.login(largs)
+            retval["id"] = uid
     else:
         code = 405
-        retval["status"] = 405
-        retval["userMessage"] = "The requested method is not allowed"
+        #retval["status"] = 405
+        #retval["userMessage"] = "The requested method is not allowed"
     return JsonResponse(retval, status=code)
