@@ -244,12 +244,33 @@ class TestModels:
         assert len(matchList["Matches"]) == 5
         
         testIDs = {}
+        for x in range(0, 4):
+            testIDs[x] = matchList["Matches"][x]
+
+        for x in range(0,3):
+            assert testIDs[x] >= testIDs[x+1]
         
 
 
 """
 # Application request for matches and receives 10 same matches. (Tests that matches won’t change if user hasn’t gone through them)
     def test_same_matches(self):
+        test = {}
+        uid = {}
+        for x in range(0, 11):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
+        
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == 5
+        
+        testIDs = {}
+        for x in range(0, 4):
+            testIDs[x] = matchList["Matches"][x]
+
+        for x in range(0,3):
+            assert testIDs[x] >= testIDs[x+1]
 
 # Application request for matches and receives 10 different matches. (Tests that if new users are added or user has accepted/declined matches, his match list is updated.)
     def test_diff_matches(self):
