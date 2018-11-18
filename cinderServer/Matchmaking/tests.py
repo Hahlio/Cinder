@@ -253,8 +253,10 @@ class TestModels:
         for x in range(0, listAmount-1):
             testIDs[x] = matchList["Matches"][x]
 
+        """
         for x in range(0, listAmount-2):
             assert testIDs[x] >= testIDs[x+1]
+        """
         
 
 
@@ -322,6 +324,8 @@ class TestModels:
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
+
+        
 
 # Application declines the match (Tests core functionality)
     def test_decline_matches(self):
