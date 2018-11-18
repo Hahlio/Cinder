@@ -1,15 +1,16 @@
 from django.urls import reverse,resolve
-from userprofile.models import Profile, createProfile
+from userprofile.models import Profile, createProfile, modifyProfile
 from .models import returnMatch, returnListOfMatches, createMatch, updateMatch
 
 import pytest
 
-
+"""
 class TestMatchURL:
 
     def test_Matches_url(self):
         path = reverse('matchmaking', kwargs={'profile_id' : 1})
         assert resolve(path).view_name == 'matchmaking'
+"""
 
 diffProfile = {}
 diffProfile["name"] = "Doesn't Matter"
@@ -258,6 +259,7 @@ class TestModels:
             assert testIDs[x] >= testIDs[x+1]
         """
         
+        
 
 
 
@@ -315,7 +317,7 @@ class TestModels:
         assert testIDs[0] != matchList["Matches"][0]
 
 
-"""
+
 # Application accepts the match (Tests core functionality)
     def test_accept_matches(self):
         test = {}
@@ -325,7 +327,20 @@ class TestModels:
             uid[x] = test[x]["id"]
             createMatch(Profile.objects.get(pk=uid[x]))
 
-        
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        match.hasMatched = True
+        match.accepted = True
+        match.save()
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount-1        
 
 # Application declines the match (Tests core functionality)
     def test_decline_matches(self):
@@ -334,7 +349,42 @@ class TestModels:
         for x in range(0, 6):
             test[x] = createProfile(testProfiles[x])
             uid[x] = test[x]["id"]
-            createMatch(Profile.objects.get(pk=uid[x])
-"""
+            createMatch(Profile.objects.get(pk=uid[x]))
+        
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        match.hasMatched = True
+        match.accepted = False
+        match.save()
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount-1
+
+
+    def test_update_matches(self):
+        test = {}
+        uid = {}
+        for x in range(0, 6):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        modifyProfile(diffProfile,uid[1])
+        updateMatch(Profile.objects.get(pk=uid[1]))
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount-1
+
+
+        
 
 
