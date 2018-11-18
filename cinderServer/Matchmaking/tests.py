@@ -297,7 +297,7 @@ class TestModels:
             createMatch(Profile.objects.get(pk=uid[x]))
         
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == listAmount-1
+        assert len(matchList["Matches"]) == listAmount
 
         testIDs = {}
         for x in range(0, listAmount - 1):
@@ -308,9 +308,9 @@ class TestModels:
         createMatch(Profile.objects.get(pk=uid[6]))
             
         matchList = returnListOfMatches(uid[0])
-        assert len(matchList["Matches"]) == listAmount-1
+        assert len(matchList["Matches"]) == listAmount
 
-        assert testIDs[0] == matchList["Matches"][0]
+        assert testIDs[0] != matchList["Matches"][0]
 
 
 """
