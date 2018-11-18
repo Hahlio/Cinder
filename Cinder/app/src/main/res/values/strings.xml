@@ -19,4 +19,5 @@
     <string name="yes">Yes</string>
     <string name="courses">Course1, Course2</string>
     <string name="location">Location</string>
+    <string name="accountCreation">Create an Account</string>
 </resources>

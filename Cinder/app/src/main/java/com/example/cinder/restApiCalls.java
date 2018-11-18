@@ -12,8 +12,8 @@ interface RestApiCalls {
     @GET("profile/{profileID}")
     Call<Profile> getProfile(@Path("profileID") int profileID);
 
-    @GET("profile/username/{username}")
-    Call<ProfileID> getProfileID(@Path("username") String username);
+    @PUT("profile/username/")
+    Call<ProfileID> getProfileID(@Body SigninInfo signinInfo);
 
     @POST("profile/")
     Call<ProfileID> createProfile(@Body Profile profile);

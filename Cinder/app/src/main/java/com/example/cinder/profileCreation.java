@@ -1,13 +1,22 @@
 package com.example.cinder;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -21,27 +30,32 @@ import static com.example.cinder.Signin.getRetro;
 
 public class ProfileCreation extends AppCompatActivity {
 
-
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creation);
 
         final Button submitButton = findViewById(R.id.submitButton);
-        final SharedPreferences mpref = getSharedPreferences("IDValue",0);
+        final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Retrofit retrofit = getRetro();
                 RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
-                Profile newProfile= createProfile();
+                Profile newProfile = createProfile();
+                if (newProfile == null) {
+                    return;
+                }
                 Call<ProfileID> call = apiCalls.createProfile(newProfile);
                 call.enqueue(new Callback<ProfileID>() {
                     @Override
                     public void onResponse(@NonNull Call<ProfileID> call, Response<ProfileID> response) {
                         SharedPreferences.Editor editor = mpref.edit();
-                        editor.putInt("profileID",Objects.requireNonNull(response.body()).getId()).apply();
+                        editor.putString("hash", response.body().getHash())
+                                .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
                     }
+
                     @Override
                     public void onFailure(Call<ProfileID> call, Throwable t) {
                         //failure code to be written
@@ -51,7 +65,8 @@ public class ProfileCreation extends AppCompatActivity {
             }
         });
     }
-    private void changeToMatchMaking(){
+
+    private void changeToMatchMaking() {
         Intent intent = new Intent(this, MatchMaking.class);
         startActivity(intent);
     }
@@ -63,23 +78,74 @@ public class ProfileCreation extends AppCompatActivity {
         final EditText course3 = findViewById(R.id.courseInput3);
         final EditText course4 = findViewById(R.id.courseInput4);
         final EditText course5 = findViewById(R.id.courseInput5);
-        final EditText username = findViewById(R.id.usernameInput);
-        final EditText uni = findViewById(R.id.uniInput);
-        final EditText study = findViewById(R.id.studyLocationInput);
-        final EditText interest = findViewById(R.id.interestInput);
-        final EditText name = findViewById(R.id.nameInput);
+
         Profile newProfile = new Profile();
-        newProfile.setUsername(username.getText().toString());
-        newProfile.setInterests(interest.getText().toString());
-        newProfile.setName(name.getText().toString());
-        newProfile.setSchool(uni.getText().toString());
-        newProfile.setPreferences(study.getText().toString());
-        newProfile.setCourses(course0.getText().toString()+","+course1.getText().toString()+
-                ","+course2.getText().toString()+","+course3.getText().toString()+
-                ","+course4.getText().toString()+","+course5.getText().toString());
-        newProfile.setLat(49.666);
-        newProfile.setLng( 123.1336);
+        String password = getOutput(R.id.passwordInput);
+        if (password == null) {
+            return null;
+        }
+        String username = getOutput(R.id.usernameInput);
+        if (username == null) {
+            return null;
+        }
+        String uni = getOutput(R.id.uniInput);
+        if (uni == null) {
+            return null;
+        }
+        String study = getOutput(R.id.studyLocationInput);
+        if (study == null) {
+            return null;
+        }
+        String interest = getOutput(R.id.interestInput);
+        if (interest == null) {
+            return null;
+        }
+        String name = getOutput(R.id.nameInput);
+        if (name == null) {
+            return null;
+        }
+        newProfile.setDeviceid(Settings.Secure.ANDROID_ID);
+        newProfile.setPassword(password);
+        newProfile.setUsername(username);
+        newProfile.setInterests(interest);
+        newProfile.setName(name);
+        newProfile.setSchool(uni);
+        newProfile.setPreferences(study);
+        newProfile.setCourses(course0.getText().toString() + "," + course1.getText().toString() +
+                "," + course2.getText().toString() + "," + course3.getText().toString() +
+                "," + course4.getText().toString() + "," + course5.getText().toString());
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+        newProfile.setLat(latitude);
+        newProfile.setLng(longitude);
         return newProfile;
     }
+
+    protected String getOutput(int location){
+        final EditText input = findViewById(location);
+        String result = input.getText().toString();
+        if(result.equals("")){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Incomplete Form";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
+            return null;
+        }
+        return result;
+    }
+
 
 }
