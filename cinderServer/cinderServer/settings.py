@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['168.62.221.80']
 INSTALLED_APPS = [
     'userprofile.apps.UserprofileConfig',
     'Matchmaking.apps.MatchmakingConfig',
+    'message.apps.MessageConfig',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -76,21 +77,21 @@ WSGI_APPLICATION = 'cinderServer.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-#    'default': {
-#        'ENGINE': 'sql_server.pyodbc',
-#        'NAME': 'yamsoftdb',
-#        'HOST': 'yamsoftdb.database.windows.net',
-#        'USER': 'Yamsoft',
-#        'PASSWORD': 'ShafiRPLlikesy@ms',
-#        'AUTOCOMMIT': True,
-#        'OPTIONS': {
-#            'driver': 'ODBC Driver 17 for SQL Server',
-#        },
-#    }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'yamsoftdb',
+        'HOST': 'yamsoftdb.database.windows.net',
+        'USER': 'Yamsoft',
+        'PASSWORD': 'ShafiRPLlikesy@ms',
+        'AUTOCOMMIT': True,
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
 }
 
 
