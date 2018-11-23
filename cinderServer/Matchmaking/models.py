@@ -17,12 +17,6 @@ class Match(models.Model):
     # false also means user blocked.
     accepted = models.BooleanField(default=False)
 
-    def isMatch(self, profile):
-        if (self.user1 == profile) or (self.user2 == profile):
-            return True
-        else:
-            return False
-
     def returnOtherMatch(self, profile):
         if self.user1 == profile:
             return self.user2

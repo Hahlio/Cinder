@@ -6,3 +6,4 @@ pytest-django
 pytest-cov
 mixer
 djangorestframework
+fcm-django
