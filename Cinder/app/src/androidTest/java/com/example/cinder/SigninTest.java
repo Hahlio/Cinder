@@ -32,9 +32,41 @@ public class SigninTest {
 
     @Rule
     public ActivityTestRule<Signin> mActivityTestRule = new ActivityTestRule<>(Signin.class);
-
     @Test
     public void signinTest() {
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.signinButton), withText("Sign In"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+
+        ViewInteraction editText = onView(
+                allOf(withId(R.id.usernameLogin),
+                        isDisplayed()));
+        editText.check(matches(isDisplayed()));
+
+        ViewInteraction editText2 = onView(
+                allOf(withId(R.id.passwordBox),
+                        isDisplayed()));
+        editText2.check(matches(isDisplayed()));
+
+        ViewInteraction button = onView(
+                allOf(withId(R.id.signinButton),
+                        isDisplayed()));
+        button.check(matches(isDisplayed()));
+
+        ViewInteraction button2 = onView(
+                allOf(withId(R.id.createAccount),
+                        isDisplayed()));
+        button2.check(matches(isDisplayed()));
+
+    }
+    @Test
+    public void signinTest2() {
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.usernameLogin),
                         childAtPosition(
@@ -77,74 +109,38 @@ public class SigninTest {
 
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.signinButton), withText("Sign In"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
                         isDisplayed()));
         appCompatButton.perform(click());
 
         ViewInteraction textView = onView(
                 allOf(withId(R.id.courseDisplay),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
                         isDisplayed()));
         textView.check(matches(isDisplayed()));
 
         ViewInteraction textView2 = onView(
                 allOf(withId(R.id.nameDisplay),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                0),
                         isDisplayed()));
         textView2.check(matches(isDisplayed()));
 
         ViewInteraction textView3 = onView(
                 allOf(withId(R.id.locationDisplay),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                2),
                         isDisplayed()));
         textView3.check(matches(isDisplayed()));
 
         ViewInteraction webView = onView(
                 allOf(withId(R.id.photoDisplay),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
                         isDisplayed()));
         webView.check(matches(isDisplayed()));
 
         ViewInteraction button = onView(
                 allOf(withId(R.id.noButton),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                4),
                         isDisplayed()));
         button.check(matches(isDisplayed()));
 
         ViewInteraction button2 = onView(
                 allOf(withId(R.id.yesButton),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                5),
                         isDisplayed()));
         button2.check(matches(isDisplayed()));
-
     }
 
     private static Matcher<View> childAtPosition(

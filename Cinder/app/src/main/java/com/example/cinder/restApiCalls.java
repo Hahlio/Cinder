@@ -15,6 +15,9 @@ interface RestApiCalls {
     @PUT("profile/username/")
     Call<ProfileID> getProfileID(@Body SigninInfo signinInfo);
 
+    @PUT("profile/username/fb/")
+    Call<FacebookLoginReturn> facebookLogin(@Body FacebookToken facebookToken);
+
     @POST("profile/")
     Call<ProfileID> createProfile(@Body Profile profile);
 

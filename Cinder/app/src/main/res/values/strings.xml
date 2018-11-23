@@ -20,4 +20,13 @@
     <string name="courses">Course1, Course2</string>
     <string name="location">Location</string>
     <string name="accountCreation">Create an Account</string>
+    <string name="facebook_app_id">1149383881901875</string>
+    <string name="fb_login_protocol_scheme">fb1149383881901875</string>
+    <string name="back">Back</string>
+    <string name="remove">Remove</string>
+    <string name="send">Send</string>
+    <string name="matches">Matches</string>
+    <string name="createGroup">Create a Group</string>
+    <string name="setting">Settings</string>
+    <string name="contacts">Contacts</string>
 </resources>

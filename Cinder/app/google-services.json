@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "111711825659",
+    "firebase_url": "https://cinder-93256.firebaseio.com",
+    "project_id": "cinder-93256",
+    "storage_bucket": "cinder-93256.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111711825659:android:9373ee48db918c98",
+        "android_client_info": {
+          "package_name": "com.example.cinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "111711825659-lk420e4ca78eb99a40tdu9a91qm3um1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cinder",
+            "certificate_hash": "af94e33a1147fa66d8de443a415036802370fb77"
+          }
+        },
+        {
+          "client_id": "111711825659-nc23rkv2sqvvcuo3qu2unho1ln13m9ia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMhCmG5QTExTpQvoYsduZp8yOtE4bJz18"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "111711825659-nc23rkv2sqvvcuo3qu2unho1ln13m9ia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

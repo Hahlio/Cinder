@@ -1,5 +1,6 @@
 package com.example.cinder;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,8 @@ public class MatchMaking extends AppCompatActivity {
         setContentView(R.layout.activity_match_making);
         final Button yesButton = findViewById(R.id.yesButton);
         final Button noButton = findViewById(R.id.noButton);
+        final Button settingButton  = findViewById(R.id.settingsButton);
+        final Button contactsButton = findViewById(R.id.contactsButton);
         final SharedPreferences mpref = getSharedPreferences("IDValue",0);
 
         final int profileID = mpref.getInt("profileID",0);
@@ -74,7 +77,12 @@ public class MatchMaking extends AppCompatActivity {
             }
         });
 
-
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeToChat();
+            }
+        });
 
 
 
@@ -151,6 +159,10 @@ public class MatchMaking extends AppCompatActivity {
             }
 
         });
+    }
+    public void changeToChat (){
+        Intent intent = new Intent(this, Chat.class);
+        startActivity(intent);
     }
 
 }
