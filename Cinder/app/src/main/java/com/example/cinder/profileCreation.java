@@ -3,6 +3,8 @@ package com.example.cinder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -24,17 +26,13 @@ import static com.example.cinder.Signin.getRetro;
 
 
 public class ProfileCreation extends AppCompatActivity {
+    public boolean created=false;
+    public boolean success=false;
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creation);
-        //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //ActivityCompat.requestPermissions(this,
-                    //new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    //MY_PERMISSIONS_REQUEST_LOCATION);
-        //}
         final Button submitButton = findViewById(R.id.submitButton);
         final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
         String name  = mpref.getString("name", "");
@@ -50,6 +48,31 @@ public class ProfileCreation extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                created = false;
+                success = false;
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (!created) {
+                        }
+                        if (mpref.getBoolean("created", true))
+                            changeToMatchMaking();
+                        else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Context context = getApplicationContext();
+                                    CharSequence text = "Username Already exist";
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(context, text, duration);
+                                    toast.show();
+                                }
+                            });
+                        }
+
+                    }
+                });
+                thread.start();
                 Retrofit retrofit = getRetro();
                 RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
                 Profile newProfile = createProfile();
@@ -61,8 +84,15 @@ public class ProfileCreation extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<ProfileID> call, Response<ProfileID> response) {
                         SharedPreferences.Editor editor = mpref.edit();
-                        editor.putString("hash", response.body().getHash())
-                                .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
+                        int profileid= response.body().getId();
+                        if(profileid!=-1) {
+                            success = true;
+                            editor.putString("hash", response.body().getHash())
+                                    .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
+
+                        }else
+                            success = false;
+                        created = true;
                     }
 
                     @Override
@@ -123,15 +153,15 @@ public class ProfileCreation extends AppCompatActivity {
         newProfile.setCourses(course0.getText().toString() + "," + course1.getText().toString() +
                 "," + course2.getText().toString() + "," + course3.getText().toString() +
                 "," + course4.getText().toString() + "," + course5.getText().toString());
-        //LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        //Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-       // double longitude = location.getLongitude();
-        //double latitude = location.getLatitude();
-        newProfile.setLat(49.2195);
-        newProfile.setLng(-122.94180);
-        //newProfile.setLat(latitude);
-        //newProfile.setLng(longitude);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+       double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+        //newProfile.setLat(49.2195);
+        //newProfile.setLng(-122.94180);
+        newProfile.setLat(latitude);
+        newProfile.setLng(longitude);
         return newProfile;
     }
 

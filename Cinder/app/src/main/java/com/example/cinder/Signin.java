@@ -1,13 +1,14 @@
 package com.example.cinder;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.Settings;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,15 +19,10 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,7 +33,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 public class Signin extends AppCompatActivity {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String BASE_URL = "http://168.62.221.80:8080/";
     public boolean loggedin = false;
     CallbackManager callbackManager;
@@ -61,6 +59,12 @@ public class Signin extends AppCompatActivity {
         loggedin = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+            new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+            MY_PERMISSIONS_REQUEST_LOCATION);
+        }
 
         final Button signinButton = findViewById(R.id.signinButton);
         final EditText usernameInput = findViewById(R.id.usernameLogin);
