@@ -30,4 +30,11 @@ interface RestApiCalls {
     @PUT("matchmaking/{profileID}")
     Call<NewMatch> addMatch(@Body NewMatch newMatch,@Path("profileID") int profileID);
 
+    @GET("matchmaking/{profileID}/contacts")
+    Call<ContactInfo> getContacts(@Path("profileID") int profileID);
+
+    @GET("matchmaking/{profileID}/group")
+    Call<GroupInfo> getGroups(@Path("profileID") int profileID);
+    
+
 }
