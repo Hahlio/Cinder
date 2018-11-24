@@ -77,10 +77,10 @@ public class MatchMaking extends AppCompatActivity {
             }
         });
 
-        settingButton.setOnClickListener(new View.OnClickListener() {
+        contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeToChat();
+                changeToContacts();
             }
         });
 
@@ -160,7 +160,7 @@ public class MatchMaking extends AppCompatActivity {
 
         });
     }
-    public void changeToChat (){
+    public void changeToContacts (){
         Intent intent = new Intent(this, Chat.class);
         startActivity(intent);
     }

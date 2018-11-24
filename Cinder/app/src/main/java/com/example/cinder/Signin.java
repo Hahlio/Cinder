@@ -40,7 +40,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Signin extends AppCompatActivity {
     private static final String BASE_URL = "http://168.62.221.80:8080/";
     public boolean loggedin = false;
-    public boolean facebook = false;
     CallbackManager callbackManager;
 
     protected static Retrofit getRetro() {
@@ -82,21 +81,18 @@ public class Signin extends AppCompatActivity {
                         if (mpref.getBoolean("loggedIn", true))
                             changeToMatchMaking();
                         else {
-                            if (facebook)
-                                changeToProfileCreation();
-                            else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Context context = getApplicationContext();
-                                        CharSequence text = "Incorrect Combination of Username and Password";
-                                        int duration = Toast.LENGTH_SHORT;
-                                        Toast toast = Toast.makeText(context, text, duration);
-                                        toast.show();
-                                    }
-                                });
-                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Context context = getApplicationContext();
+                                    CharSequence text = "Incorrect Combination of Username and Password";
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(context, text, duration);
+                                    toast.show();
+                                }
+                            });
                         }
+
                     }
                 });
                 thread.start();
@@ -163,9 +159,9 @@ public class Signin extends AppCompatActivity {
                         }
                         if (mpref.getBoolean("loggedIn", true))
                             changeToMatchMaking();
-                        else {
+                        else
                             changeToProfileCreation();
-                            }
+
                         }
                 });
                 thread.start();

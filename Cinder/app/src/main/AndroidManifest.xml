@@ -43,8 +43,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".Chat" android:theme="@android:style/Theme.NoTitleBar"/>
-        <activity android:name=".Contact"></activity>
+        <activity
+            android:name=".Chat"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".Contact" />
     </application>
 
 </manifest>
