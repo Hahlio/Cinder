@@ -12,11 +12,11 @@ public class FacebookToken {
     @Expose
     private String deviceid;
 
-    public String gettoken() {
+    public String getToken() {
         return token;
     }
 
-    public void settoken(String token) {
+    public void setToken(String token) {
         this.token = token;
     }
 

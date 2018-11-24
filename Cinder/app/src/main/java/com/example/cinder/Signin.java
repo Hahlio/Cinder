@@ -176,7 +176,7 @@ public class Signin extends AppCompatActivity {
                     RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
                     FacebookToken fb = new FacebookToken();
                     fb.setDeviceid(FirebaseInstanceId.getInstance().getToken());
-                    fb.settoken(accessToken.getToken());
+                    fb.setToken(accessToken.getToken());
                     Call<FacebookLoginReturn> call = apiCalls.facebookLogin(fb);
                     call.enqueue(new Callback<FacebookLoginReturn>() {
                         @Override
