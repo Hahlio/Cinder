@@ -47,6 +47,10 @@
             android:name=".Chat"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".Contact" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".UserSettings"></activity>
     </application>
 
 </manifest>
