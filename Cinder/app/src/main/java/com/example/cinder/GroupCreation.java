@@ -55,10 +55,10 @@ public class GroupCreation extends AppCompatActivity {
         call.enqueue(new Callback<GroupID>() {
             @Override
             public void onResponse(@NonNull Call<GroupID> call, @NonNull Response<GroupID> response) {
-                Intent i = new Intent(context, Chat.class);
-                i.putExtra("matchID",response.body().getMatchID());
+                Intent i = new Intent(context, Contact.class);
                 i.putExtra("contacts",getIntent().getExtras().getIntegerArrayList("contacts"));
                 i.putExtra("names",getIntent().getExtras().getStringArrayList("names"));
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
             }
 

@@ -33,30 +33,49 @@ public class Contact extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
         offset=0;
+
         final SharedPreferences mpref = getSharedPreferences("IDValue",0);
+        final int profileID = mpref.getInt("profileID",0);
+        final Context context = this;
+
         final Button groupsButton = findViewById(R.id.groupSwitch);
         final Button previousButton = findViewById(R.id.previousButton);
         final Button nextButton = findViewById(R.id.nextButton);
         final Button createGroupButton = findViewById(R.id.groupCreation);
+        final TextView title = findViewById(R.id.matches);
         final TextView num = findViewById(R.id.pageNum);
-        final int profileID = mpref.getInt("profileID",0);
-        final Context context = this;
+
         getContacts(profileID);
 
+        if(group){
+            createGroupButton.setVisibility(View.VISIBLE);
+            title.setText("Groups");
+        }else{
+            createGroupButton.setVisibility(View.GONE);
+            title.setText("Contacts");
+        }
+
+        // The toggle button for groups and matches
         groupsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 group = !group;
                 if(group){
+                    createGroupButton.setVisibility(View.VISIBLE);
                     groupsButton.setText("Matches");
+                    title.setText("Groups");
                     getGroups(profileID);
                 }else{
+                    createGroupButton.setVisibility(View.GONE);
                     groupsButton.setText("Groups");
+                    title.setText("Contacts");
                     getContacts(profileID);
                 }
             }
         });
+
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +87,7 @@ public class Contact extends AppCompatActivity {
                 }
             }
         });
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,6 +98,7 @@ public class Contact extends AppCompatActivity {
 
             }
         });
+
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,6 +110,8 @@ public class Contact extends AppCompatActivity {
 
             }
         });
+
+        // Sets up the buttons to go to the chat
         for(int k=0;k<12;k++){
             TextView nameDisplay = findViewById(textViewArray[k]);
             final int finalK = k;

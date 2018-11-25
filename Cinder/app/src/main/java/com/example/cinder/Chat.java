@@ -32,6 +32,7 @@ public class Chat extends AppCompatActivity {
     private List<String> mTimestamps;
     private List<Integer> mUserID;
     private GroupID groupObj;
+    private Context thisobject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,19 @@ public class Chat extends AppCompatActivity {
         if(!group){
             addGroup.setVisibility(View.INVISIBLE);
             leave.setText("Unmatch");
+            leave.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    unmatch(userInt);
+                }
+            });
+        }else{
+            leave.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    leaveGroup(userInt);
+                }
+            });
         }
 
         send.setOnClickListener(new View.OnClickListener(){
@@ -87,7 +101,11 @@ public class Chat extends AppCompatActivity {
                 }
             }
         });
+
+        // Defining the context
         final Context context = this;
+        thisobject = this;
+
         addGroup.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -97,6 +115,37 @@ public class Chat extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        @Override
+        public void onMessageReceived(RemoteMessage remoteMessage) {
+            // ...
+
+            // TODO(developer): Handle FCM messages here.
+            // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
+            Log.d(TAG, "From: " + remoteMessage.getFrom());
+
+            // Check if message contains a data payload.
+            if (remoteMessage.getData().size() > 0) {
+                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+                if (/* Check if data needs to be processed by long running job */ true) {
+                    // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
+                    scheduleJob();
+                } else {
+                    // Handle message within 10 seconds
+                    handleNow();
+                }
+
+            }
+
+            // Check if message contains a notification payload.
+            if (remoteMessage.getNotification() != null) {
+                Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            }
+
+            // Also if you intend on generating your own notifications as a result of a received FCM
+            // message, here is where that should be initiated. See sendNotification method below.
+        }
     }
 
     public void getMessages(int profileID) {
@@ -133,8 +182,6 @@ public class Chat extends AppCompatActivity {
     }
 
     public void sendMsg(SendMessage toSend, final int userInt) {
-        final SharedPreferences mpref = getSharedPreferences("IDValue",0);
-        int matchID = mpref.getInt("matchID",0);
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<GroupID> call = apiCalls.sendMessage(toSend, userInt);
@@ -142,6 +189,50 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<GroupID> call, @NonNull Response<GroupID> response) {
                 getMessages(userInt);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<GroupID> call, @NonNull Throwable t) {
+                Log.d("error", "error");
+            }
+
+        });
+    }
+
+    public void unmatch(final int userInt) {
+        Retrofit retrofit = getRetro();
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
+        Call<GroupID> call = apiCalls.removeFromMatch(groupObj, userInt);
+        call.enqueue(new Callback<GroupID>() {
+            @Override
+            public void onResponse(@NonNull Call<GroupID> call, @NonNull Response<GroupID> response) {
+                Intent i = new Intent(thisobject, Contact.class);
+                i.putExtra("contacts",getIntent().getExtras().getIntegerArrayList("contacts"));
+                i.putExtra("names",getIntent().getExtras().getStringArrayList("names"));
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<GroupID> call, @NonNull Throwable t) {
+                Log.d("error", "error");
+            }
+
+        });
+    }
+
+    public void leaveGroup(final int userInt) {
+        Retrofit retrofit = getRetro();
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
+        Call<GroupID> call = apiCalls.removeFromGroup(groupObj, userInt);
+        call.enqueue(new Callback<GroupID>() {
+            @Override
+            public void onResponse(@NonNull Call<GroupID> call, @NonNull Response<GroupID> response) {
+                Intent i = new Intent(thisobject, Contact.class);
+                i.putExtra("contacts",getIntent().getExtras().getIntegerArrayList("contacts"));
+                i.putExtra("names",getIntent().getExtras().getStringArrayList("names"));
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
             }
 
             @Override

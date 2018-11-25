@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -43,8 +44,11 @@ interface RestApiCalls {
     @PUT("matchmaking/{profileID}/groups")
     Call<GroupID> addUsersToGroup(@Body GroupAdd groupAdd,@Path("profileID") int profileID);
 
-    @DELETE("matchmaking/{profileID}/groups")
+    @HTTP(method = "DELETE", path = "matchmaking/{profileID}/groups", hasBody = true)
     Call<GroupID> removeFromGroup(@Body GroupID groupID,@Path("profileID") int profileID);
+
+    @HTTP(method = "DELETE", path = "matchmaking/{profileID}/contacts", hasBody = true)
+    Call<GroupID> removeFromMatch(@Body GroupID groupID,@Path("profileID") int profileID);
 
     @PUT("message/{profileID}")
     Call<Message> getMessage(@Body GroupID groupID,@Path("profileID") int profileID);
