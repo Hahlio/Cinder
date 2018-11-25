@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['168.62.221.80']
 # Application definition
 
 INSTALLED_APPS = [
+    'fcm_django',
     'userprofile.apps.UserprofileConfig',
     'Matchmaking.apps.MatchmakingConfig',
     'message.apps.MessageConfig',
@@ -113,6 +114,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "AAAAGgKLLvs:APA91bEGQC89I5pyEEqvR35MoI41hAMpzD4u7utRNviR0jdWyOMcD7-iZ42vWDBuVc97DDJN9caVvLMIPz212ApAY-RE5xrcEbL7SOlw5IQUYWmZcQtfAlq1zWfroSE4-lr8hfguNYqn",
+         # true if you want to have only one active device per registered user at a time
+         # default: False
+        "ONE_DEVICE_PER_USER": False,
+         # devices to which notifications cannot be sent,
+         # are deleted upon receiving error response from FCM
+         # default: False
+        "DELETE_INACTIVE_DEVICES": False,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

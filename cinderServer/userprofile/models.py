@@ -11,6 +11,7 @@ class Profile(models.Model):
     password = models.CharField(default="1234", max_length=100)
     loggedin = models.BooleanField(default=False)
     currentHash = models.CharField(default="abcedfghijklmnop", max_length=100)
+    deviceID = models.TextField(default = "abc123abc")
     lat = models.FloatField()
     lng = models.FloatField()
     school = models.CharField(default="none", max_length=100)
@@ -56,6 +57,7 @@ class Profile(models.Model):
             retval["hash"] = self.currentHash
             hashed = hashlib.sha1()
             hashed.update(str(str(self.currentHash) + args["deviceid"]).encode('utf-8'))
+            deviceID = args["deviceid"]
             self.loggedin = True
             self.currentHash = hashed.hexdigest()
             self.save()

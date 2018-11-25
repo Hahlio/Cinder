@@ -4,8 +4,12 @@ from . import views
 
 
 urlpatterns = [
-    # /Matchmaking
+    # /matchmaking
     path('', views.index, name='index'),
-    # /Matchmaking/id
+    # /matchmaking/id
     path('<int:profile_id>',views.matches.as_view(), name="matchmaking"),
+    # /matchmaking/id/contacts
+    path('<int:profile_id>/contacts',views.contacts.as_view(), name="contacts"),
+    # /matchmaking/id/groups
+    path('<int:profile_id>/groups',views.groups.as_view(), name="groups"),
 ]
