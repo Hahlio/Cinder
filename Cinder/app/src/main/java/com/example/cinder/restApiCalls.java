@@ -2,6 +2,7 @@ package com.example.cinder;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -35,6 +36,20 @@ interface RestApiCalls {
 
     @GET("matchmaking/{profileID}/group")
     Call<GroupInfo> getGroups(@Path("profileID") int profileID);
-    
+
+    @POST("matchmaking/{profileID}/group")
+    Call<GroupID> createNewGroup(@Body GroupName name,@Path("profileID") int profileID);
+
+    @PUT("matchmaking/{profileID}/group")
+    Call<GroupID> addUsersToGroup(@Body GroupAdd groupAdd,@Path("profileID") int profileID);
+
+    @DELETE("matchmaking/{profileID}/group")
+    Call<GroupID> removeFromGroup(@Body GroupID groupID,@Path("profileID") int profileID);
+
+    @GET("message/{profileID}")
+    Call<Message> getMessage(@Body GroupID groupID,@Path("profileID") int profileID);
+
+    @POST("message/{profileID}")
+    Call<GroupID> sendMessage(@Body SendMessage SendMessage,@Path("profileID") int profileID);
 
 }

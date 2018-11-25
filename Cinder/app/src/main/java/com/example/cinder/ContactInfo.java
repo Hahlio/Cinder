@@ -14,7 +14,7 @@ public class ContactInfo {
     @Expose
     private List<Integer> matchID = null;
 
-    public List<String> getusers() {
+    public List<String> getUsers() {
         return users;
     }
 
