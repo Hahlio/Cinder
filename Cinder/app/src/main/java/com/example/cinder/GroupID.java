@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class GroupID {
-    @SerializedName("matchID")
+    @SerializedName("matchid")
     @Expose
     private int matchID;
 

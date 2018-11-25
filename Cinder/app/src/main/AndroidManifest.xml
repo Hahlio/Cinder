@@ -44,8 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Chat"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:name=".Chat" />
         <activity android:name=".Contact" />
         <activity
             android:name=".SettingsActivity"

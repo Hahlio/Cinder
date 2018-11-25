@@ -45,10 +45,9 @@ public class Chat extends AppCompatActivity {
             mUserID.add(10);
         }
 
-        String matchString = getIntent().getExtras().getString("matchID");
-        String userString = getIntent().getExtras().getString("userID");
-        int matchInt = Integer.parseInt(matchString);
-        int userInt = Integer.parseInt(userString);
+        int matchInt = getIntent().getExtras().getInt("matchID");
+        final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
+        int userInt = mpref.getInt("profileID",0);
         groupObj = new GroupID();
         groupObj.setMatchID(matchInt);
 
@@ -62,6 +61,8 @@ public class Chat extends AppCompatActivity {
 
         mMessageAdapter = new MessageListAdapter(this, messageList, mUserList, mTimestamps, mUserID, userInt);
         mMessageRecycler.setAdapter(mMessageAdapter);
+
+        getMessages(userInt);
     }
 
     public void getMessages(int profileID) {
@@ -73,11 +74,22 @@ public class Chat extends AppCompatActivity {
         call.enqueue(new Callback<Message>() {
             @Override
             public void onResponse(@NonNull Call<Message> call, @NonNull Response<Message> response) {
-                messageList = response.body().getMessages();
-                mUserList = response.body().getUsers();
-                mTimestamps = response.body().getTimeStamps();
-                mUserID = response.body().getUserID();
-                mMessageAdapter.notifyItemRangeChanged(0, messageList.size());
+                List<String> tempMsg = response.body().getMessages();
+                List<String> tempUser = response.body().getUsers();
+                List<String> tempTime = response.body().getTimeStamps();
+                List<Integer> tempID = response.body().getUserID();
+
+                messageList.clear();
+                mUserList.clear();
+                mTimestamps.clear();
+                mUserID.clear();
+
+                messageList.addAll(tempMsg);
+                mUserList.addAll(tempUser);
+                mTimestamps.addAll(tempTime);
+                mUserID.addAll(tempID);
+
+                mMessageAdapter.notifyDataSetChanged();
             }
 
             @Override

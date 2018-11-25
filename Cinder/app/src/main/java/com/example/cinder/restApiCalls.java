@@ -46,7 +46,7 @@ interface RestApiCalls {
     @DELETE("matchmaking/{profileID}/groups")
     Call<GroupID> removeFromGroup(@Body GroupID groupID,@Path("profileID") int profileID);
 
-    @GET("message/{profileID}")
+    @PUT("message/{profileID}")
     Call<Message> getMessage(@Body GroupID groupID,@Path("profileID") int profileID);
 
     @POST("message/{profileID}")
