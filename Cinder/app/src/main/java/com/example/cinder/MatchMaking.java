@@ -24,6 +24,8 @@ public class MatchMaking extends AppCompatActivity {
 
     private static List<Integer> pmatches;
     private String hash;
+    private boolean doneAdd;
+    private boolean doneGet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +57,9 @@ public class MatchMaking extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!pmatches.isEmpty()){
-                    pmatches.remove(0);
-                    if(!pmatches.isEmpty())
-                        showProfile(pmatches.get(0));
-                    else
+                    addMatch(profileID,pmatches.get(0),true);
+                    getMatches(profileID);
+                    if(pmatches.isEmpty())
                         outOfMatches();
                 }
             }
@@ -68,10 +69,9 @@ public class MatchMaking extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!pmatches.isEmpty()){
-                    pmatches.remove(0);
-                    if(!pmatches.isEmpty())
-                        showProfile(pmatches.get(0));
-                    else
+                    addMatch(profileID,pmatches.get(0),false);
+
+                    if(pmatches.isEmpty())
                         outOfMatches();
                 }
             }
@@ -125,16 +125,17 @@ public class MatchMaking extends AppCompatActivity {
     public void addMatch(int userID1, int userID2, boolean accept){
         NewMatch newMatch = new NewMatch();
         newMatch.setAccepted(accept);
-        newMatch.setHasMatched(true);
         newMatch.setUser1(userID1);
         newMatch.setUser2(userID2);
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<NewMatch> call = apiCalls.addMatch(newMatch,userID1);
+        final SharedPreferences mpref = getSharedPreferences("IDValue",0);
+        final int profileID = mpref.getInt("profileID",0);
         call.enqueue(new Callback<NewMatch>() {
             @Override
             public void onResponse(@NonNull Call<NewMatch> call, @NonNull Response<NewMatch> response) {
-                //no need for code here
+                getMatches(profileID);
             }
             @Override
             public void onFailure(@NonNull Call<NewMatch> call, @NonNull Throwable t) {
@@ -151,6 +152,7 @@ public class MatchMaking extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<Matches> call, @NonNull Response<Matches> response) {
                 pmatches=response.body().getMatches();
+
             }
 
             @Override
@@ -161,8 +163,10 @@ public class MatchMaking extends AppCompatActivity {
         });
     }
     public void changeToContacts (){
-        Intent intent = new Intent(this, Chat.class);
+        Intent intent = new Intent(this, Contact.class);
         startActivity(intent);
     }
+
+
 
 }

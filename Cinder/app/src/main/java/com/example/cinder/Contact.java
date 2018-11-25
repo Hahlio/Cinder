@@ -41,7 +41,6 @@ public class Contact extends AppCompatActivity {
         final Button createGroupButton = findViewById(R.id.groupCreation);
         final int profileID = mpref.getInt("profileID",0);
         final Context context = this;
-
         getContacts(profileID);
         groupsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,10 +48,8 @@ public class Contact extends AppCompatActivity {
                 group = !group;
                 if(group){
                     getGroups(profileID);
-                    waitForAPI(finished);
                 }else{
                     getContacts(profileID);
-                    waitForAPI(finished);
                 }
             }
         });
@@ -96,7 +93,6 @@ public class Contact extends AppCompatActivity {
     }
 
     public void getContacts(int profileID) {
-        finished = false;
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<ContactInfo> call = apiCalls.getContacts(profileID);
@@ -105,7 +101,7 @@ public class Contact extends AppCompatActivity {
             public void onResponse(@NonNull Call<ContactInfo> call, @NonNull Response<ContactInfo> response) {
                 contacts=response.body().getMatchID();
                 name=response.body().getUsers();
-                finished = true;
+                displayContacts(name);
             }
 
             @Override
@@ -116,7 +112,6 @@ public class Contact extends AppCompatActivity {
         });
     }
     public void getGroups(int profileID) {
-        finished = false;
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<GroupInfo> call = apiCalls.getGroups(profileID);
@@ -125,7 +120,7 @@ public class Contact extends AppCompatActivity {
             public void onResponse(@NonNull Call<GroupInfo> call, @NonNull Response<GroupInfo> response) {
                 contacts=response.body().getMatchID();
                 name=response.body().getGroups();
-                finished = true;
+                displayContacts(name);
             }
 
             @Override
@@ -135,21 +130,12 @@ public class Contact extends AppCompatActivity {
 
         });
     }
-    public void waitForAPI(final boolean done ){
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                //while(done){}
-                //displayContacts(name);
-            }
-        });
-        thread.start();
-    }
+
     public void displayContacts(List<String> name){
         for(int k = 0; k <12; k++){
-            if(k<name.size()) {
+            if((k+offset)<name.size()) {
                 TextView nameDisplay = findViewById(textViewArray[k]);
-                nameDisplay.setText(name.get(k));
+                nameDisplay.setText(name.get(k+offset));
             }else{
                 TextView nameDisplay = findViewById(textViewArray[k]);
                 nameDisplay.setText("");

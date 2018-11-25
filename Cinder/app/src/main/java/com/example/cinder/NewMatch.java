@@ -11,9 +11,6 @@ class NewMatch {
     @SerializedName("user2")
     @Expose
     private int user2;
-    @SerializedName("hasMatched")
-    @Expose
-    private Boolean hasMatched;
     @SerializedName("accepted")
     @Expose
     private Boolean accepted;
@@ -32,14 +29,6 @@ class NewMatch {
 
     public void setUser2(int user2) {
         this.user2 = user2;
-    }
-
-    public Boolean getHasMatched() {
-        return hasMatched;
-    }
-
-    public void setHasMatched(Boolean hasMatched) {
-        this.hasMatched = hasMatched;
     }
 
     public Boolean getAccepted() {

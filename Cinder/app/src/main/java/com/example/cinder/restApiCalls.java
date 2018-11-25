@@ -34,16 +34,16 @@ interface RestApiCalls {
     @GET("matchmaking/{profileID}/contacts")
     Call<ContactInfo> getContacts(@Path("profileID") int profileID);
 
-    @GET("matchmaking/{profileID}/group")
+    @GET("matchmaking/{profileID}/groups")
     Call<GroupInfo> getGroups(@Path("profileID") int profileID);
 
-    @POST("matchmaking/{profileID}/group")
+    @POST("matchmaking/{profileID}/groups")
     Call<GroupID> createNewGroup(@Body GroupName name,@Path("profileID") int profileID);
 
-    @PUT("matchmaking/{profileID}/group")
+    @PUT("matchmaking/{profileID}/groups")
     Call<GroupID> addUsersToGroup(@Body GroupAdd groupAdd,@Path("profileID") int profileID);
 
-    @DELETE("matchmaking/{profileID}/group")
+    @DELETE("matchmaking/{profileID}/groups")
     Call<GroupID> removeFromGroup(@Body GroupID groupID,@Path("profileID") int profileID);
 
     @GET("message/{profileID}")
