@@ -102,7 +102,7 @@ public class Signin extends AppCompatActivity {
                 thread.start();
                 Retrofit retrofit = getRetro();
                 RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
-                String username = usernameInput.getText().toString();
+                final String username = usernameInput.getText().toString();
                 String password = passwordInput.getText().toString();
                 SigninInfo info = new SigninInfo();
                 info.setUsername(username);
@@ -117,7 +117,7 @@ public class Signin extends AppCompatActivity {
                             SharedPreferences.Editor editor = mpref.edit();
                             editor.putString("hash", response.body().getHash())
                                     .putString("name", "")
-                                    .putString("email", "")
+                                    .putString("email", username)
                                     .putInt("profileID", profileID).putBoolean("loggedIn", true).apply();
 
                         } else {
@@ -219,6 +219,7 @@ public class Signin extends AppCompatActivity {
 
         public void changeToMatchMaking (){
             Intent intent = new Intent(this, MatchMaking.class);
+            intent.putExtra("change",false);
             startActivity(intent);
         }
         public void changeToProfileCreation (){

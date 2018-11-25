@@ -4,6 +4,7 @@ The details of the profile can be accessed from here, as well
 as searching for the ID of the profile and creation of profiles.
 """
 import json
+import requests
 
 from threading import Thread
 from django.http import JsonResponse
@@ -46,6 +47,7 @@ def profDetails(request, profile_id):
         code = 404
         retval["status"] = 404
         retval["userMessage"] = "The profile you requested does not exist"
+    print(retval)
     return JsonResponse(retval, status=code)
 
 def createProf(request):
@@ -71,6 +73,7 @@ def createProf(request):
         code = 405
         retval["status"] = 405
         retval["userMessage"] = "The requested method is not allowed"
+    print (retval)
     return JsonResponse(retval, status=code)
 
 def lookupUser(request):
@@ -99,6 +102,46 @@ def lookupUser(request):
             retval["id"] = uid
     else:
         code = 405
-        #retval["status"] = 405
-        #retval["userMessage"] = "The requested method is not allowed"
+        retval["status"] = 405
+        retval["userMessage"] = "The requested method is not allowed"
+    print (retval)
+    return JsonResponse(retval, status=code)
+
+def fbCreateOrLogin(request):
+    code = 200
+    retval = {}
+    if request.method == 'PUT':
+        jsonArguments = request.body.decode("utf-8")
+        args = json.loads(jsonArguments)
+        if "token" not in args:
+            code = 405
+            retval["status"] = 405
+            retval["userMessage"] = "The requested method is not allowed"
+        else:
+            response = requests.get('https://graph.facebook.com/me?fields=name,email&access_token=%s' % args["token"])
+            data = response.json()
+            if "error" not in args:
+                test = findID(data["email"])
+                if test["id"] >= 0:
+                    # If it exists, log them in
+                    creds = {}
+                    user = Profile.objects.get(pk=test["id"])
+                    creds["password"] = user.password
+                    creds["deviceid"] = args["deviceid"]
+                    retval = user.login(test["email"], user.password)
+                    retval["id"] = test["id"]
+                else:
+                    # Tell the app that profile does not exist and must create a profile with information I provide
+                    retval["id"] = -1
+                    retval["name"] = data["name"]
+                    retval["email"] = data["email"]
+            else:
+                code = 405
+                retval["status"] = 405
+                retval["userMessage"] = "The requested method is not allowed"
+    else:
+        code = 405
+        retval["status"] = 405
+        retval["userMessage"] = "The requested method is not allowed"
+    print (retval)
     return JsonResponse(retval, status=code)

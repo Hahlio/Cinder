@@ -6,16 +6,24 @@ import math
 from django.db import models
 from django.db.models import Q
 from userprofile.models import Profile
+from django.core.exceptions import ObjectDoesNotExist
 
 class Match(models.Model):
-    user1 = models.ForeignKey(Profile, related_name="user1", on_delete=models.CASCADE)
-    user2 = models.ForeignKey(Profile, related_name="user2", on_delete=models.CASCADE)
-    score = models.IntegerField(default=0)
-    # checks if this person has seen this match before
+    user1 = models.ForeignKey(Profile, null=True, blank=True, related_name="user1", on_delete=models.CASCADE)
+    user2 = models.ForeignKey(Profile, null=True, blank=True, related_name="user2", on_delete=models.CASCADE)
+    score = models.IntegerField(default=-1)
+    # checks if both users has accepted or rejected
+    user1HasMatched = models.BooleanField(default=False)
+    user2HasMatched = models.BooleanField(default=False)
+
     hasMatched = models.BooleanField(default=False)
     # checks if this person accepted or declined the match.
     # false also means user blocked.
-    accepted = models.BooleanField(default=False)
+    user1accepted = models.BooleanField(default=False)
+    user2accepted = models.BooleanField(default=False)
+
+    group_members = models.ManyToManyField(Profile)
+    group_name = models.CharField(default="NULL", max_length=100)
 
     def returnOtherMatch(self, profile):
         if self.user1 == profile:
@@ -58,7 +66,7 @@ class Match(models.Model):
         return self.score
 
 def updateMatch(profile):
-    matchList = Match.objects.all().filter(Q(user1__exact=profile)|Q(user2__exact=profile)).filter(hasMatched=False)
+    matchList = Match.objects.all().filter((Q(user1__exact= profile) & Q(user1HasMatched = False))|(Q(user2__exact= profile) & Q(user2HasMatched = False)))
     for matches in matchList:
         matches.generate()
         matches.save()
@@ -80,13 +88,11 @@ def returnListOfMatches(profile_id):
     retVal = {}
     profileList = []
 
-    matchList = Match.objects.all().filter(Q(user1__exact=p)|Q(user2__exact=p)).filter(hasMatched=False).filter(score__gte=0).order_by('-score')[:5]
+    matchList = Match.objects.all().filter((Q(user1__exact=p) & Q(user1HasMatched = False))|(Q(user2__exact=p) & Q(user2HasMatched = False))).filter(score__gte=0).order_by('-score')[:5]
     for eachMatch in matchList:
         profileList.append(eachMatch.returnOtherMatch(p).id)
-        #profileList.append(Match.returnOtherMatch(p))
 
     retVal["Matches"] = profileList
-    #matchList.returnOtherMatch(p).id
     return retVal
 
  # used when creating a new user.
@@ -95,7 +101,97 @@ def createMatch(profile):
     profile_set1 = Profile.objects.all()
     for userPro in profile_set1:
         if userPro.id != profile.id:
-            M1 = Match(user1=userPro, user2=profile, score=0, hasMatched=False, accepted=False)
+            M1 = Match(user1=userPro, user2=profile, score=0, user1HasMatched=False, user2HasMatch = False, user1accepted=False, user2accepted=False)
             M1.generate()
             M1.save()
     return 0
+
+def matchAccept(userid, match, acceptance):
+    userProfile = Profile.objects.get(pk=userid)
+
+    if match.user1 == userProfile:
+        match.user1accepted = acceptance
+        match.user1HasMatched = True
+
+        if match.user2HasMatched:
+            if match.user2accepted:
+                # Notify User2 of a match;
+                match.hasMatched = True
+    else:
+        match.user2accepted = acceptance
+        match.user2HasMatched = True
+
+        if match.user1HasMatched:
+            if match.user1accepted:
+                # Notify user1 of a match;
+                match.hasMatched = True
+    match.save()
+
+def createGroup(groupName, profile_id):
+    currUser = Profile.objects.get(pk=profile_id)
+    newMatch = Match(group_name= groupName, hasMatched = True, user1HasMatched = True)
+    newMatch.save()
+    newMatch.group_members.add(currUser)
+    newMatch.save()
+    retval = {}
+    retval["GroupID"] = newMatch.id
+    return retval
+
+def groupAdd(userMatchID, matchID, profile_id):
+    group = Match.objects.get(pk=matchID)
+    userMatch = Match.objects.get(pk=userMatchID)
+    currUser = Profile.objects.get(pk=profile_id)
+    newMember = userMatch.returnOtherMatch(currUser)
+    group.group_members.add(newMember)
+    userMatch.save()
+    #notify group member
+
+def groupLeave(userID, matchID):
+    try:
+        group = Match.objects.get(pk=matchID)
+        leavingMember = Profile.objects.get(pk=userID)
+        group.group_members.remove(leavingMember)
+        groupList = group.group_members
+        if groupList.exists():
+            group.save()
+        else:
+            group.delete()
+    except ObjectDoesNotExist:
+        pass
+
+def groupMembers(matchID):
+    group = Match.objects.get(pk=matchID)
+    return group.group_members.all()
+
+def returnContacts(userID):
+    userProfile = Profile.objects.get(pk=userID)
+
+    retval = {}
+    nameList = []
+    idList = []
+    contactList = Match.objects.all().filter(Q(user1__exact=userProfile)|Q(user2__exact=userProfile)).filter(hasMatched = True)
+    for eachMatch in contactList:
+        nameList.append(eachMatch.returnOtherMatch(userProfile).name)
+        idList.append(eachMatch.id)
+    retval["users"] = nameList
+    retval["matchID"] = idList
+    return retval
+
+def returnGroups(userID):
+    currUser = Profile.objects.get(pk=userID)
+
+    retval = {}
+    groupList = []
+    idList = []
+
+    matchedGroups = Match.objects.all().filter(hasMatched = True).filter(user2HasMatched = False).filter(group_members__id = currUser.id)
+    for group in matchedGroups:
+        groupList.append(group.group_name)
+        idList.append(group.id)
+
+    retval["groups"] = groupList
+    retval["matchID"] = idList
+    return retval
+
+
+
