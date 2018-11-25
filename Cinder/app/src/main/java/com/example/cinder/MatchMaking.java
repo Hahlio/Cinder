@@ -39,6 +39,7 @@ public class MatchMaking extends AppCompatActivity {
 
         final int profileID = mpref.getInt("profileID",0);
         hash=mpref.getString("hash","");
+        outOfMatches();
         getMatches(profileID);
 
         Thread thread = new Thread(new Runnable(){

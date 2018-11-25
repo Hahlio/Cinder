@@ -49,8 +49,10 @@ public class Contact extends AppCompatActivity {
             public void onClick(View view) {
                 group = !group;
                 if(group){
+                    groupsButton.setText("Matches");
                     getGroups(profileID);
                 }else{
+                    groupsButton.setText("Groups");
                     getContacts(profileID);
                 }
             }
