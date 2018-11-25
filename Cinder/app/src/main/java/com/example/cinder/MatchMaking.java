@@ -83,6 +83,12 @@ public class MatchMaking extends AppCompatActivity {
                 changeToContacts();
             }
         });
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeToSetting();
+            }
+        });
 
 
 
@@ -164,6 +170,11 @@ public class MatchMaking extends AppCompatActivity {
     }
     public void changeToContacts (){
         Intent intent = new Intent(this, Contact.class);
+        startActivity(intent);
+    }
+
+    public void changeToSetting(){
+        Intent intent = new Intent(this, UserSettings.class);
         startActivity(intent);
     }
 

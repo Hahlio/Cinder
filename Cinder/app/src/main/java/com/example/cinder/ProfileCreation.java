@@ -37,10 +37,17 @@ public class ProfileCreation extends AppCompatActivity {
         final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
         String name  = mpref.getString("name", "");
         String email  = mpref.getString("email", "");
+        final int oldProfileID = mpref.getInt("profileID",0);
+        final boolean changingProfile= getIntent().getExtras().getBoolean("change");
         if(!name.equals("")&&!email.equals("")){
             EditText nameInput = findViewById(R.id.nameInput);
             nameInput.setText(name);
             nameInput.setEnabled(false);
+            EditText emailInput = findViewById(R.id.usernameInput);
+            emailInput.setText(email);
+            emailInput.setEnabled(false);
+        }
+        if(changingProfile){
             EditText emailInput = findViewById(R.id.usernameInput);
             emailInput.setText(email);
             emailInput.setEnabled(false);
@@ -55,8 +62,10 @@ public class ProfileCreation extends AppCompatActivity {
                     public void run() {
                         while (!created) {
                         }
-                        if (mpref.getBoolean("created", true))
+                        if (success) {
                             changeToMatchMaking();
+                            mpref.edit().putString("name",getOutput(R.id.nameInput)).putString("email",getOutput(R.id.usernameInput)).apply();
+                        }
                         else {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -79,28 +88,45 @@ public class ProfileCreation extends AppCompatActivity {
                 if (newProfile == null) {
                     return;
                 }
-                Call<ProfileID> call = apiCalls.createProfile(newProfile);
-                call.enqueue(new Callback<ProfileID>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ProfileID> call, Response<ProfileID> response) {
-                        SharedPreferences.Editor editor = mpref.edit();
-                        int profileid= response.body().getId();
-                        if(profileid!=-1) {
+                if(!changingProfile) {
+                    Call<ProfileID> call = apiCalls.createProfile(newProfile);
+                    call.enqueue(new Callback<ProfileID>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ProfileID> call, Response<ProfileID> response) {
+                            SharedPreferences.Editor editor = mpref.edit();
+                            int profileid = response.body().getId();
+                            if (profileid != -1) {
+                                success = true;
+                                editor.putString("hash", response.body().getHash())
+                                        .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
+
+                            } else
+                                success = false;
+                            created = true;
+                        }
+
+                        @Override
+                        public void onFailure(Call<ProfileID> call, Throwable t) {
+                            //failure code to be written
+                        }
+                    });
+                }else{
+                    Call<Profile> call = apiCalls.changeProfile(newProfile,oldProfileID);
+                    call.enqueue(new Callback<Profile>() {
+                        @Override
+                        public void onResponse(@NonNull Call<Profile> call, Response<Profile> response) {
                             success = true;
-                            editor.putString("hash", response.body().getHash())
-                                    .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
+                            created = true;
+                        }
 
-                        }else
-                            success = false;
-                        created = true;
-                    }
+                        @Override
+                        public void onFailure(Call<Profile> call, Throwable t) {
+                            //failure code to be written
+                        }
 
-                    @Override
-                    public void onFailure(Call<ProfileID> call, Throwable t) {
-                        //failure code to be written
-                    }
-                });
-                changeToMatchMaking();
+                    });
+                }
+
             }
         });
     }
@@ -110,7 +136,7 @@ public class ProfileCreation extends AppCompatActivity {
         startActivity(intent);
     }
 
-    protected Profile createProfile() {
+    protected Profile createProfile(){
         final EditText course0 = findViewById(R.id.courseInput0);
         final EditText course1 = findViewById(R.id.courseInput1);
         final EditText course2 = findViewById(R.id.courseInput2);
@@ -156,10 +182,8 @@ public class ProfileCreation extends AppCompatActivity {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-       double longitude = location.getLongitude();
+        double longitude = location.getLongitude();
         double latitude = location.getLatitude();
-        //newProfile.setLat(49.2195);
-        //newProfile.setLng(-122.94180);
         newProfile.setLat(latitude);
         newProfile.setLng(longitude);
         return newProfile;
