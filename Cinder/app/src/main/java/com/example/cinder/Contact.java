@@ -53,8 +53,8 @@ public class Contact extends AppCompatActivity {
         Thread thread = new Thread(new Runnable(){
             @Override
             public void run(){
-                while(done){}
-                displayContacts(name);
+                //while(done){}
+                //displayContacts(name);
             }
         });
         thread.start();
