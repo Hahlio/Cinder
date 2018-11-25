@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,9 +39,11 @@ public class Contact extends AppCompatActivity {
         final Button previousButton = findViewById(R.id.previousButton);
         final Button nextButton = findViewById(R.id.nextButton);
         final Button createGroupButton = findViewById(R.id.groupCreation);
+        final TextView num = findViewById(R.id.pageNum);
         final int profileID = mpref.getInt("profileID",0);
         final Context context = this;
         getContacts(profileID);
+
         groupsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,6 +61,8 @@ public class Contact extends AppCompatActivity {
                 if(offset > 0) {
                     offset = offset - 12;
                     displayContacts(name);
+                    int display = (offset/12)+1;
+                    num.setText(String.valueOf(display));
                 }
             }
         });
@@ -66,12 +71,19 @@ public class Contact extends AppCompatActivity {
             public void onClick(View view) {
                 offset = offset + 12;
                 displayContacts(name);
+                int display = (offset/12)+1;
+                num.setText(String.valueOf(display));
 
             }
         });
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("error", "error");
+                Intent i = new Intent(context, GroupCreation.class);
+                i.putExtra("contacts",(ArrayList<Integer>)contacts);
+                i.putExtra("names",(ArrayList<String>)name);
+                startActivity(i);
 
             }
         });
@@ -84,6 +96,8 @@ public class Contact extends AppCompatActivity {
                     Intent i = new Intent(context, Chat.class);
                     i.putExtra("matchID",contacts.get(finalK+offset));
                     i.putExtra("group",group);
+                    i.putExtra("contacts",(ArrayList<Integer>)contacts);
+                    i.putExtra("names",(ArrayList<String>)name);
                     startActivity(i);
                 }
             });
