@@ -113,4 +113,6 @@
     <string name="notifications">Notifications</string>
     <string name="signOut">Sign Out</string>
     <string name="changeProfile">Change Profile</string>
+    <string name="groupName">Group Name</string>
+    <string name="Comfirm">Confirm</string>
 </resources>

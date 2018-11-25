@@ -43,13 +43,13 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Chat" />
+        <activity android:name=".Chat" />
         <activity android:name=".Contact" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".UserSettings"></activity>
+        <activity android:name=".UserSettings" />
+        <activity android:name=".GroupCreation"></activity>
     </application>
 
 </manifest>

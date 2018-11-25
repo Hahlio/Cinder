@@ -24,7 +24,6 @@ public class Contact extends AppCompatActivity {
     private static List<Integer> contacts;
     private static List<String> name;
     private boolean group = false;
-    private boolean finished = false;
     private int offset=0;
     private int[] textViewArray= {R.id.match1,R.id.match2,R.id.match3,R.id.match4,R.id.match5,R.id.match6,
             R.id.match7,R.id.match8,R.id.match9,R.id.match10,R.id.match11,R.id.match12};
@@ -84,6 +83,7 @@ public class Contact extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent i = new Intent(context, Chat.class);
                     i.putExtra("matchID",contacts.get(finalK+offset));
+                    i.putExtra("group",group);
                     startActivity(i);
                 }
             });
