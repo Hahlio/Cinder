@@ -37,9 +37,8 @@ public class MessageListAdapter extends RecyclerView.Adapter{
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
-        //UserMessage message = (UserMessage) mMessageList.get(position);
-        // TODO: get the message of that position
-        if (position % 2 == 0 /* if userid == currentuser*/) {
+        int id = mUserID.get(position);
+        if (id == currentUser) {
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
             return VIEW_TYPE_MESSAGE_RECEIVED;
@@ -72,10 +71,10 @@ public class MessageListAdapter extends RecyclerView.Adapter{
         // TODO: get the message of that position
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
-                ((SentMessageHolder) holder).bind(message);
+                ((SentMessageHolder) holder).bind(position);
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
-                ((ReceivedMessageHolder) holder).bind(message);
+                ((ReceivedMessageHolder) holder).bind(position);
         }
     }
 
@@ -89,9 +88,9 @@ public class MessageListAdapter extends RecyclerView.Adapter{
             timeText = (TextView) itemView.findViewById(R.id.text_message_time);
         }
 
-        void bind(String message) {
-            messageText.setText("Message, and this is a medium sized message.");
-            timeText.setText("Timestamp");
+        void bind(Integer message) {
+            messageText.setText(mMessageList.get(message));
+            timeText.setText(mTimestamps.get(message));
         }
     }
 
@@ -106,10 +105,10 @@ public class MessageListAdapter extends RecyclerView.Adapter{
             nameText = (TextView) itemView.findViewById(R.id.text_message_name);
         }
 
-        void bind(String message) {
-            messageText.setText("Message, but it is super long so that we can see that the wrapping is actually working and isn't a joke.");
-            timeText.setText("Timestamp");
-            nameText.setText("Name");
+        void bind(Integer message) {
+            messageText.setText(mMessageList.get(message));
+            timeText.setText(mTimestamps.get(message));
+            nameText.setText(mUserList.get(message));
         }
     }
 }
