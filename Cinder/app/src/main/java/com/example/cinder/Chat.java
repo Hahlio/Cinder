@@ -38,10 +38,11 @@ public class Chat extends AppCompatActivity {
         mTimestamps = new ArrayList<>();
         mUserID = new ArrayList<>();
 
-        int matchInt = getIntent().getExtras().getInt("matchID");
-        //boolean group = getIntent().getExtras().getBoolean("group");
+        final int matchInt = getIntent().getExtras().getInt("matchID");
+        final boolean group = getIntent().getExtras().getBoolean("group");
         final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
-        int userInt = mpref.getInt("profileID",0);
+        final int userInt = mpref.getInt("profileID",0);
+
         groupObj = new GroupID();
         groupObj.setMatchID(matchInt);
 
@@ -65,8 +66,15 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String content = messageField.getText().toString();
-                Log.d("myTag", content);
+                Log.d("sending Message", content);
                 messageField.setText("");
+                SendMessage toSend = new SendMessage();
+                toSend.setSenderid(userInt);
+                toSend.setIsGroup(group);
+                toSend.setMatchID(matchInt);
+                toSend.setSendMessage(content);
+                sendMsg(toSend, userInt);
+
             }
         });
     }
@@ -98,6 +106,26 @@ public class Chat extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<Message> call, @NonNull Throwable t) {
+                Log.d("error", "error");
+            }
+
+        });
+    }
+
+    public void sendMsg(SendMessage toSend, final int userInt) {
+        final SharedPreferences mpref = getSharedPreferences("IDValue",0);
+        int matchID = mpref.getInt("matchID",0);
+        Retrofit retrofit = getRetro();
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
+        Call<GroupID> call = apiCalls.sendMessage(toSend, userInt);
+        call.enqueue(new Callback<GroupID>() {
+            @Override
+            public void onResponse(@NonNull Call<GroupID> call, @NonNull Response<GroupID> response) {
+                getMessages(userInt);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<GroupID> call, @NonNull Throwable t) {
                 Log.d("error", "error");
             }
 
