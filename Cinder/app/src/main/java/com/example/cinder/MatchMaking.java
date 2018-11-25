@@ -7,8 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.cinder.restobjects.Profile;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,12 +44,20 @@ public class MatchMaking extends AppCompatActivity {
         final Button noButton = findViewById(R.id.noButton);
         final Button settingButton  = findViewById(R.id.settingsButton);
         final Button contactsButton = findViewById(R.id.contactsButton);
+        final WebView webview = findViewById(R.id.photoDisplay);
         final SharedPreferences mpref = getSharedPreferences("IDValue",0);
 
         final int profileID = mpref.getInt("profileID",0);
         hash=mpref.getString("hash","");
         outOfMatches();
         getMatches(profileID);
+
+        webview.setWebViewClient(new WebViewClient());
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setDomStorageEnabled(true);
+        webview.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+        webview.loadUrl("https://www.google.com/maps/search/?api=1&query=47.5951518,-122.3316393");
+
 
         Thread thread = new Thread(new Runnable(){
             @Override

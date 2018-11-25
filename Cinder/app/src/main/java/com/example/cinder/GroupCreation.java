@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cinder.restobjects.GroupID;
+import com.example.cinder.restobjects.GroupName;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

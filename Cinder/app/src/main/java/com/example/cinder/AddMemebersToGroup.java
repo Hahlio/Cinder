@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cinder.restobjects.GroupID;
+
 import java.util.List;
 
 import retrofit2.Call;
