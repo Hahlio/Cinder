@@ -18,7 +18,7 @@ public class Message {
     @Expose
     private List<Integer> userID = null;
 
-    @SerializedName("timeStamps")
+    @SerializedName("timestamps")
     @Expose
     private List<String> timeStamps= null;
 
