@@ -30,6 +30,22 @@ public class Contact extends AppCompatActivity {
             R.id.match7,R.id.match8,R.id.match9,R.id.match10,R.id.match11,R.id.match12};
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // bind to Service
+        final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
+        final int userInt = mpref.getInt("profileID",0);
+        Firebase.giveContact(this, userInt);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from service
+        Firebase.removeContact();
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);

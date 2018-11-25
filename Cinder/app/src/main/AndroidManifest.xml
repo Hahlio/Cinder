@@ -51,6 +51,11 @@
         <activity android:name=".UserSettings" />
         <activity android:name=".GroupCreation" />
         <activity android:name=".AddMemebersToGroup"></activity>
+        <service android:name=".Firebase">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"></action>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

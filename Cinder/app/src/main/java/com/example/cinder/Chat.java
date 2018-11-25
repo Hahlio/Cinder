@@ -1,9 +1,12 @@
 package com.example.cinder;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +29,7 @@ import retrofit2.Retrofit;
 
 import static com.example.cinder.Signin.getRetro;
 
-public class Chat extends AppCompatActivity{
+public class Chat extends AppCompatActivity {
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -36,6 +39,22 @@ public class Chat extends AppCompatActivity{
     private List<Integer> mUserID;
     private GroupID groupObj;
     private Context thisobject;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // bind to Service
+        final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
+        final int userInt = mpref.getInt("profileID",0);
+        Firebase.giveChat(this, userInt);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from service
+        Firebase.removeChat();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,24 +232,5 @@ public class Chat extends AppCompatActivity{
             }
 
         });
-    }
-
-    public class MyFCMClass extends FirebaseMessagingService {
-
-        private final String TAG = "JSA-FCM";
-
-        @Override
-        public void onMessageReceived(RemoteMessage remoteMessage) {
-
-            if (remoteMessage.getNotification() != null) {
-                Log.e(TAG, "Title: " + remoteMessage.getNotification().getTitle());
-                Log.e(TAG, "Body: " + remoteMessage.getNotification().getBody());
-            }
-
-            if (remoteMessage.getData().size() > 0) {
-                Log.e(TAG, "Data: " + remoteMessage.getData());
-            }
-        }
-
     }
 }
