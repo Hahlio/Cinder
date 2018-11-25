@@ -1,5 +1,7 @@
 package com.example.cinder;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -61,6 +63,13 @@ public class Chat extends AppCompatActivity {
 
         final Button send = findViewById(R.id.send);
         final EditText messageField = findViewById(R.id.messageInput);
+        final Button addGroup = findViewById(R.id.addGroup);
+        final Button leave = findViewById(R.id.Leave);
+
+        if(!group){
+            addGroup.setVisibility(View.INVISIBLE);
+            leave.setText("Unmatch");
+        }
 
         send.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -68,13 +77,24 @@ public class Chat extends AppCompatActivity {
                 String content = messageField.getText().toString();
                 Log.d("sending Message", content);
                 messageField.setText("");
-                SendMessage toSend = new SendMessage();
-                toSend.setSenderid(userInt);
-                toSend.setIsGroup(group);
-                toSend.setMatchID(matchInt);
-                toSend.setSendMessage(content);
-                sendMsg(toSend, userInt);
-
+                if(!(content.equals("")||content.equals(null))) {
+                    SendMessage toSend = new SendMessage();
+                    toSend.setSenderid(userInt);
+                    toSend.setIsGroup(group);
+                    toSend.setMatchID(matchInt);
+                    toSend.setSendMessage(content);
+                    sendMsg(toSend, userInt);
+                }
+            }
+        });
+        final Context context = this;
+        addGroup.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(context, AddMemebersToGroup.class);
+                i.putExtra("contacts",getIntent().getExtras().getIntegerArrayList("contacts"));
+                i.putExtra("names",getIntent().getExtras().getStringArrayList("names"));
+                startActivity(i);
             }
         });
     }

@@ -115,4 +115,5 @@
     <string name="changeProfile">Change Profile</string>
     <string name="groupName">Group Name</string>
     <string name="Comfirm">Confirm</string>
+    <string name="instructionToAdd">Click on the User to Add to Group</string>
 </resources>
