@@ -49,7 +49,8 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".UserSettings" />
-        <activity android:name=".GroupCreation"></activity>
+        <activity android:name=".GroupCreation" />
+        <activity android:name=".AddMemebersToGroup"></activity>
     </application>
 
 </manifest>
