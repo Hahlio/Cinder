@@ -67,4 +67,7 @@ interface RestApiCalls {
 
     @PUT("profile/notification/{profileID}")
     Call<NotificationSwitch> setNotification(@Body NotificationSwitch notificationSwitch,@Path("profileID") int profileID);
+
+    @PUT("matchmaking/{profileID}/groupscontacts")
+    Call<ContactInfo> getNonGroupContacts(@Body GroupID groupID,@Path("profileID") int profileID);
 }
