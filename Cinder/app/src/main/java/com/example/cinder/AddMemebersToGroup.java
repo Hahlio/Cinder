@@ -29,7 +29,7 @@ public class AddMemebersToGroup extends AppCompatActivity {
             R.id.user7,R.id.user8,R.id.user9,R.id.user10,R.id.user11,R.id.user12};
     private int offset=0;
     private int profileID;
-    private int matchID;
+    private int groupMatchID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class AddMemebersToGroup extends AppCompatActivity {
         final Button nextButton = findViewById(R.id.nextContactsButton);
         final TextView num= findViewById(R.id.contactsPageNum);
         final Context context = this;
-        matchID= getIntent().getIntExtra("matchID",0);
+        groupMatchID= getIntent().getIntExtra("matchID",0);
         getContacts(profileID);
 
 
@@ -83,7 +83,7 @@ public class AddMemebersToGroup extends AppCompatActivity {
 
     public void addToGroup(int matchID){
         GroupAdd groupadd = new GroupAdd();
-        groupadd.setMatchID(matchID);
+        groupadd.setMatchID(groupMatchID);
         groupadd.setUserMatchID(matchID);
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -91,7 +91,7 @@ public class AddMemebersToGroup extends AppCompatActivity {
         call.enqueue(new Callback<GroupID>() {
             @Override
             public void onResponse(@NonNull Call<GroupID> call, @NonNull Response<GroupID> response) {
-                //no need for code here
+                getContacts(profileID);
             }
 
             @Override
@@ -119,7 +119,7 @@ public class AddMemebersToGroup extends AppCompatActivity {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         GroupID groupID= new GroupID();
-        groupID.setMatchID(matchID);
+        groupID.setMatchID(groupMatchID);
         Call<ContactInfo> call = apiCalls.getNonGroupContacts(groupID,profileID);
         call.enqueue(new Callback<ContactInfo>() {
             @Override
