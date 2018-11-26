@@ -48,7 +48,7 @@ public class SendMessage {
         return isGroup;
     }
 
-    public void setIsGroup(boolean matchID) {
+    public void setIsGroup(boolean isGroup) {
         this.isGroup = isGroup;
     }
 }
