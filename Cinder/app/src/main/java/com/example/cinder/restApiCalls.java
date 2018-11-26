@@ -65,4 +65,6 @@ interface RestApiCalls {
     @POST("message/{profileID}")
     Call<GroupID> sendMessage(@Body SendMessage SendMessage,@Path("profileID") int profileID);
 
+    @PUT("profile/notification/{profileID}")
+    Call<NotificationSwitch> setNotification(@Body NotificationSwitch notificationSwitch,@Path("profileID") int profileID);
 }
