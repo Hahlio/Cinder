@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -182,7 +183,10 @@ public class ProfileCreation extends AppCompatActivity {
                 "," + course4.getText().toString() + "," + course5.getText().toString());
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
         newProfile.setLat(latitude);
