@@ -136,7 +136,8 @@ public class ProfileCreation extends AppCompatActivity {
                             if (profileid != -1) {
                                 success = true;
                                 editor.putString("hash", response.body().getHash())
-                                        .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
+                                        .putInt("profileID", Objects.requireNonNull(response.body()).getId())
+                                        .putBoolean("loggedIn", true).apply();
 
                             } else
                                 success = false;
