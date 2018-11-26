@@ -192,15 +192,15 @@ public class ProfileCreation extends AppCompatActivity {
         if (username == null) {
             return null;
         }
-        String uni = getOutput(R.id.uniInput);
+        String uni = getOutput(R.id.uniInput).toUpperCase();
         if (uni == null) {
             return null;
         }
-        String study = getOutput(R.id.studyLocationInput);
+        String study = getOutput(R.id.studyLocationInput).toUpperCase();
         if (study == null) {
             return null;
         }
-        String interest = getOutput(R.id.interestInput);
+        String interest = getOutput(R.id.interestInput).toUpperCase();
         if (interest == null) {
             return null;
         }
@@ -215,9 +215,12 @@ public class ProfileCreation extends AppCompatActivity {
         newProfile.setName(name);
         newProfile.setSchool(uni);
         newProfile.setPreferences(study);
-        newProfile.setCourses(course0.getText().toString() + "," + course1.getText().toString() +
-                "," + course2.getText().toString() + "," + course3.getText().toString() +
-                "," + course4.getText().toString() + "," + course5.getText().toString());
+        newProfile.setCourses(course0.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course1.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course2.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course3.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course4.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course5.getText().toString().replace(" ","") .toUpperCase());
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // Acquire a reference to the system Location Manager

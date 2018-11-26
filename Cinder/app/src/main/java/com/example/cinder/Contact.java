@@ -163,8 +163,6 @@ public class Contact extends AppCompatActivity {
                     i.putExtra("matchID",contacts.get(finalK+offset));
                     i.putExtra("name", name.get(finalK+offset));
                     i.putExtra("group",group);
-                    i.putExtra("contacts",(ArrayList<Integer>)contacts);
-                    i.putExtra("names",(ArrayList<String>)name);
                     startActivity(i);
                 }
             });

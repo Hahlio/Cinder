@@ -196,7 +196,9 @@ public class Signin extends AppCompatActivity {
                             if (profileID != -1) {
                                 SharedPreferences.Editor editor = mpref.edit();
                                 editor.putString("hash", response.body().getHash())
-                                        .putInt("profileID", profileID).putBoolean("loggedIn", true).apply();
+                                        .putInt("profileID", profileID).putBoolean("loggedIn", true)
+                                        .putString("name", response.body().getName())
+                                        .putString("email", response.body().getEmail()).apply();
                             } else {
                                 SharedPreferences.Editor editor = mpref.edit();
                                 editor.putBoolean("loggedIn", false)

@@ -143,8 +143,7 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(context, AddMemebersToGroup.class);
-                i.putExtra("contacts",getIntent().getExtras().getIntegerArrayList("contacts"));
-                i.putExtra("names",getIntent().getExtras().getStringArrayList("names"));
+                i.putExtra("matchID",getIntent().getIntExtra("matchID",0));
                 startActivity(i);
             }
         });
