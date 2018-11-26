@@ -8,7 +8,7 @@ public class SendMessage {
     @Expose
     private int senderid;
 
-    @SerializedName("matchID")
+    @SerializedName("matchid")
     @Expose
     private int matchID;
 
@@ -40,7 +40,7 @@ public class SendMessage {
         return message;
     }
 
-    public void setSendMessage(String matchID) {
+    public void setSendMessage(String message) {
         this.message = message;
     }
 
@@ -48,7 +48,7 @@ public class SendMessage {
         return isGroup;
     }
 
-    public void setIsGroup(boolean matchID) {
+    public void setIsGroup(boolean isGroup) {
         this.isGroup = isGroup;
     }
 }

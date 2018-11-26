@@ -4,15 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.cinder.restobjects.Profile;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Objects;
@@ -28,6 +31,40 @@ import static com.example.cinder.Signin.getRetro;
 public class ProfileCreation extends AppCompatActivity {
     public boolean created=false;
     public boolean success=false;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Start GPS
+        // Acquire a reference to the system Location Manager
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                Log.e("Location", location.toString());
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 0, locationListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // End GPS
+        this.locationManager.removeUpdates(locationListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +76,7 @@ public class ProfileCreation extends AppCompatActivity {
         String email  = mpref.getString("email", "");
         final int oldProfileID = mpref.getInt("profileID",0);
         final boolean changingProfile= getIntent().getExtras().getBoolean("change");
+
         if(!name.equals("")&&!email.equals("")){
             EditText nameInput = findViewById(R.id.nameInput);
             nameInput.setText(name);
@@ -67,16 +105,7 @@ public class ProfileCreation extends AppCompatActivity {
                             mpref.edit().putString("name",getOutput(R.id.nameInput)).putString("email",getOutput(R.id.usernameInput)).apply();
                         }
                         else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Context context = getApplicationContext();
-                                    CharSequence text = "Username Already exist";
-                                    int duration = Toast.LENGTH_SHORT;
-                                    Toast toast = Toast.makeText(context, text, duration);
-                                    toast.show();
-                                }
-                            });
+                            showToast("Username Already exist");
                         }
 
                     }
@@ -98,7 +127,8 @@ public class ProfileCreation extends AppCompatActivity {
                             if (profileid != -1) {
                                 success = true;
                                 editor.putString("hash", response.body().getHash())
-                                        .putInt("profileID", Objects.requireNonNull(response.body()).getId()).apply();
+                                        .putInt("profileID", Objects.requireNonNull(response.body()).getId())
+                                        .putBoolean("loggedIn", true).apply();
 
                             } else
                                 success = false;
@@ -153,15 +183,15 @@ public class ProfileCreation extends AppCompatActivity {
         if (username == null) {
             return null;
         }
-        String uni = getOutput(R.id.uniInput);
+        String uni = getOutput(R.id.uniInput).toUpperCase();
         if (uni == null) {
             return null;
         }
-        String study = getOutput(R.id.studyLocationInput);
+        String study = getOutput(R.id.studyLocationInput).toUpperCase();
         if (study == null) {
             return null;
         }
-        String interest = getOutput(R.id.interestInput);
+        String interest = getOutput(R.id.interestInput).toUpperCase();
         if (interest == null) {
             return null;
         }
@@ -176,10 +206,16 @@ public class ProfileCreation extends AppCompatActivity {
         newProfile.setName(name);
         newProfile.setSchool(uni);
         newProfile.setPreferences(study);
-        newProfile.setCourses(course0.getText().toString() + "," + course1.getText().toString() +
-                "," + course2.getText().toString() + "," + course3.getText().toString() +
-                "," + course4.getText().toString() + "," + course5.getText().toString());
+        newProfile.setCourses(course0.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course1.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course2.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course3.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course4.getText().toString().replace(" ","") .toUpperCase()+
+                "," + course5.getText().toString().replace(" ","") .toUpperCase());
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         double longitude = location.getLongitude();
@@ -208,5 +244,17 @@ public class ProfileCreation extends AppCompatActivity {
         return result;
     }
 
+    protected void showToast(final String message){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Context context = getApplicationContext();
+                CharSequence text = message;
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
+    }
 
 }

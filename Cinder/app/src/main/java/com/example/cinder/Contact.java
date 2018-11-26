@@ -3,14 +3,20 @@ package com.example.cinder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cinder.restobjects.ContactInfo;
+import com.example.cinder.restobjects.GroupInfo;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,52 +35,124 @@ public class Contact extends AppCompatActivity {
             R.id.match7,R.id.match8,R.id.match9,R.id.match10,R.id.match11,R.id.match12};
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // bind to Service
+        final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
+        final int userInt = mpref.getInt("profileID",0);
+        Firebase.giveContact(this, userInt);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from service
+        Firebase.removeContact();
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
         offset=0;
+
         final SharedPreferences mpref = getSharedPreferences("IDValue",0);
+        final int profileID = mpref.getInt("profileID",0);
+        final Context context = this;
+
         final Button groupsButton = findViewById(R.id.groupSwitch);
         final Button previousButton = findViewById(R.id.previousButton);
         final Button nextButton = findViewById(R.id.nextButton);
         final Button createGroupButton = findViewById(R.id.groupCreation);
-        final int profileID = mpref.getInt("profileID",0);
-        final Context context = this;
+        final TextView title = findViewById(R.id.matches);
+        final TextView num = findViewById(R.id.pageNum);
+
         getContacts(profileID);
+
+        if(group){
+            createGroupButton.setVisibility(View.VISIBLE);
+            title.setText("Groups");
+        }else{
+            createGroupButton.setVisibility(View.GONE);
+            title.setText("Contacts");
+        }
+
+        // The toggle button for groups and matches
         groupsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 group = !group;
                 if(group){
+                    createGroupButton.setVisibility(View.VISIBLE);
+                    Drawable image = ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_person_black_24dp
+                    );
+                    image.setBounds(
+                            0, // left
+                            0, // top
+                            image.getIntrinsicWidth(), // right
+                            image.getIntrinsicHeight() // bottom
+                    );
+                    groupsButton.setCompoundDrawables(image,null,null,null);
+                    title.setText("Groups");
                     getGroups(profileID);
                 }else{
+                    createGroupButton.setVisibility(View.GONE);
+                    title.setText("Contacts");
+                    Drawable image = ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_group_black_24dp
+                    );
+                    image.setBounds(
+                            0, // left
+                            0, // top
+                            image.getIntrinsicWidth(), // right
+                            image.getIntrinsicHeight() // bottom
+                    );
+                    groupsButton.setCompoundDrawables(image,null,null,null);
                     getContacts(profileID);
                 }
             }
         });
+
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(offset > 0) {
                     offset = offset - 12;
                     displayContacts(name);
+                    int display = (offset/12)+1;
+                    num.setText(String.valueOf(display));
                 }
             }
         });
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 offset = offset + 12;
                 displayContacts(name);
+                int display = (offset/12)+1;
+                num.setText(String.valueOf(display));
 
             }
         });
+
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("error", "error");
+                Intent i = new Intent(context, GroupCreation.class);
+                i.putExtra("contacts",(ArrayList<Integer>)contacts);
+                i.putExtra("names",(ArrayList<String>)name);
+                startActivity(i);
 
             }
         });
+
+        // Sets up the buttons to go to the chat
         for(int k=0;k<12;k++){
             TextView nameDisplay = findViewById(textViewArray[k]);
             final int finalK = k;
@@ -83,6 +161,7 @@ public class Contact extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent i = new Intent(context, Chat.class);
                     i.putExtra("matchID",contacts.get(finalK+offset));
+                    i.putExtra("name", name.get(finalK+offset));
                     i.putExtra("group",group);
                     startActivity(i);
                 }
@@ -91,7 +170,9 @@ public class Contact extends AppCompatActivity {
 
 
     }
-
+    /**
+    * @param profileID profile id of the user
+     */
     public void getContacts(int profileID) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -111,6 +192,11 @@ public class Contact extends AppCompatActivity {
 
         });
     }
+
+    /**
+     * Get all the groups the user is in and display them
+     * @param profileID ID of the current logged in user
+     */
     public void getGroups(int profileID) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);

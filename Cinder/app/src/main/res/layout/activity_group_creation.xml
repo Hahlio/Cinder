@@ -7,11 +7,10 @@
     tools:context=".GroupCreation">
 
     <EditText
-        android:id="@+id/groupNameButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/groupNameInput"
+        android:layout_width="286dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="37dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/groupName"
@@ -22,13 +21,19 @@
 
     <Button
         android:id="@+id/confirmButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/Comfirm"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/button"
+        android:drawableLeft="@drawable/ic_check_black_24dp"
+        android:drawablePadding="5dp"
+        android:paddingLeft="11dp"
+        android:paddingRight="11dp"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/groupNameButton"
+        app:layout_constraintStart_toEndOf="@+id/groupNameInput"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
