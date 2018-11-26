@@ -113,11 +113,11 @@ public class MatchMaking extends AppCompatActivity {
             public void onResponse(@NonNull Call<Profile> call, @NonNull Response<Profile> response) {
                 Profile show = response.body();
                 nameDisplay.setText(Objects.requireNonNull(show).getName());
-                locationDisplay.setText(show.getLat() +", " + show.getLng());
+                locationDisplay.setText(show.getInterests().replaceAll(",", " "));
                 courseDisplay.setText(show.getCourses().replaceAll(",", " "));
                 String school = show.getSchool();
                 String html =
-                        "     <iframe width=\"350\" height=\"275\" frameborder=\"0\" src=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyA002TR7ZO-RZ3Gkes-wQEMdffB-GJAu70&q="
+                        "     <iframe width=\"350\" height=\"275\" frameborder=\"0\" align=middle src=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyA002TR7ZO-RZ3Gkes-wQEMdffB-GJAu70&q="
                                 + school
                                 +"\" scrolling=\"no\">\n"
                                 +"     </iframe>";
