@@ -22,6 +22,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
 
     public MessageListAdapter(Context context, List<String> messageList, List<String> userList,
                               List<String> timestamps, List<Integer> userID, Integer currentUser) {
+        // Stores objects
         mContext = context;
         mMessageList = messageList;
         mUserList = userList;
@@ -35,9 +36,9 @@ public class MessageListAdapter extends RecyclerView.Adapter{
         return mMessageList.size();
     }
 
-    // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
+        // Figures out what type of message
         int id = mUserID.get(position);
         if (id == currentUser) {
             return VIEW_TYPE_MESSAGE_SENT;
@@ -50,7 +51,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-
+        // Creates a view depending on what type it is
         if (viewType == VIEW_TYPE_MESSAGE_SENT) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
@@ -67,9 +68,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        //UserMessage message = (UserMessage) mMessageList.get(position);
-        String message = "123";
-        // TODO: get the message of that position
+        // Tells the scrolling view what objects are there
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
                 ((SentMessageHolder) holder).bind(position);
@@ -80,6 +79,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
     }
 
     private class SentMessageHolder extends RecyclerView.ViewHolder {
+        // Creates the sent messages
         TextView messageText, timeText;
 
         SentMessageHolder(View itemView) {
@@ -88,7 +88,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
             messageText = (TextView) itemView.findViewById(R.id.text_message_body);
             timeText = (TextView) itemView.findViewById(R.id.text_message_time);
         }
-
+        // For the view
         void bind(Integer message) {
             messageText.setText(mMessageList.get(message));
             timeText.setText(mTimestamps.get(message));
@@ -96,6 +96,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
+        // Creates the received messages
         TextView messageText, timeText, nameText;
 
         ReceivedMessageHolder(View itemView) {
@@ -105,7 +106,7 @@ public class MessageListAdapter extends RecyclerView.Adapter{
             timeText = (TextView) itemView.findViewById(R.id.text_message_time);
             nameText = (TextView) itemView.findViewById(R.id.text_message_name);
         }
-
+        // For the view
         void bind(Integer message) {
             messageText.setText(mMessageList.get(message));
             timeText.setText(mTimestamps.get(message));
