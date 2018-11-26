@@ -113,7 +113,7 @@ public class MatchMaking extends AppCompatActivity {
             public void onResponse(@NonNull Call<Profile> call, @NonNull Response<Profile> response) {
                 Profile show = response.body();
                 nameDisplay.setText(Objects.requireNonNull(show).getName());
-                locationDisplay.setText(show.getInterests().replaceAll(",", " "));
+                locationDisplay.setText("Interests: "+show.getInterests().replaceAll(",", " "));
                 courseDisplay.setText(show.getCourses().replaceAll(",", " "));
                 String school = show.getSchool();
                 String html =
