@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cinder.restobjects.ContactInfo;
+import com.example.cinder.restobjects.GroupInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +139,7 @@ public class Contact extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent i = new Intent(context, Chat.class);
                     i.putExtra("matchID",contacts.get(finalK+offset));
+                    i.putExtra("name", name.get(finalK+offset));
                     i.putExtra("group",group);
                     i.putExtra("contacts",(ArrayList<Integer>)contacts);
                     i.putExtra("names",(ArrayList<String>)name);

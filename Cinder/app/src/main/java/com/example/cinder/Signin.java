@@ -15,6 +15,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.example.cinder.restobjects.FacebookLoginReturn;
+import com.example.cinder.restobjects.FacebookToken;
+import com.example.cinder.restobjects.SigninInfo;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;

@@ -1,4 +1,4 @@
-package com.example.cinder;
+package com.example.cinder.restobjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

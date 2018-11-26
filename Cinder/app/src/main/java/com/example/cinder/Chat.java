@@ -1,12 +1,9 @@
 package com.example.cinder;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,9 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
+import com.example.cinder.restobjects.GroupID;
+import com.example.cinder.restobjects.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,12 +63,14 @@ public class Chat extends AppCompatActivity {
 
         final int matchInt = getIntent().getExtras().getInt("matchID");
         final boolean group = getIntent().getExtras().getBoolean("group");
+        final String personName = getIntent().getExtras().getString("name");
         final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
         final int userInt = mpref.getInt("profileID",0);
 
         groupObj = new GroupID();
         groupObj.setMatchID(matchInt);
 
+        // THe recyclerview setup (actual object, manager and activating it)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
@@ -88,7 +88,11 @@ public class Chat extends AppCompatActivity {
         final EditText messageField = findViewById(R.id.messageInput);
         final Button addGroup = findViewById(R.id.addGroup);
         final Button leave = findViewById(R.id.Leave);
+        final TextView name = findViewById(R.id.name);
 
+        name.setText(personName);
+
+        // Displays different buttons depending on what kind of chat you are in
         if(!group){
             addGroup.setVisibility(View.INVISIBLE);
             leave.setText("Unmatch");
@@ -139,6 +143,10 @@ public class Chat extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the message screen with the current messages of the current chat you are in
+     * @param profileID the Profile ID of the current user
+     */
     public void getMessages(int profileID) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -146,6 +154,7 @@ public class Chat extends AppCompatActivity {
         call.enqueue(new Callback<Message>() {
             @Override
             public void onResponse(@NonNull Call<Message> call, @NonNull Response<Message> response) {
+                // Just gets the new information and tells the recycler that it is updated
                 List<String> tempMsg = response.body().getMessages();
                 List<String> tempUser = response.body().getUsers();
                 List<String> tempTime = response.body().getTimeStamps();
@@ -172,6 +181,11 @@ public class Chat extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sends a message to the chat
+     * @param toSend The message to be sent
+     * @param userInt The current user
+     */
     public void sendMsg(SendMessage toSend, final int userInt) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -190,6 +204,10 @@ public class Chat extends AppCompatActivity {
         });
     }
 
+    /**
+     * Unmatching a user of the current chat(It knows the context of the current chat)
+     * @param userInt the current user
+     */
     public void unmatch(final int userInt) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -212,6 +230,10 @@ public class Chat extends AppCompatActivity {
         });
     }
 
+    /**
+     * Leaves the group you are currently looking at
+     * @param userInt the current user
+     */
     public void leaveGroup(final int userInt) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
