@@ -39,6 +39,14 @@ public class Chat extends AppCompatActivity {
     private Context thisobject;
 
     @Override
+    public void onResume(){
+        super.onResume();
+        final SharedPreferences mpref = getSharedPreferences("IDValue", 0);
+        final int userInt = mpref.getInt("profileID",0);
+        getMessages(userInt);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         // bind to Service
