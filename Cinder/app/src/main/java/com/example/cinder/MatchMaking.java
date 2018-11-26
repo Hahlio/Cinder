@@ -58,6 +58,11 @@ public class MatchMaking extends AppCompatActivity {
         webview.setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         webview.loadUrl("https://www.google.com/maps/search/?api=1&query=47.5951518,-122.3316393");
 
+        String html =
+                "     <iframe width=\"350\" height=\"275\" frameborder=\"0\" src=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyA002TR7ZO-RZ3Gkes-wQEMdffB-GJAu70&q=ubc\" scrolling=\"no\">\n" +
+                "     </iframe>";
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.loadData(html, "text/html", null);
 
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +104,7 @@ public class MatchMaking extends AppCompatActivity {
         final TextView nameDisplay = findViewById(R.id.nameDisplay);
         final TextView locationDisplay = findViewById(R.id.locationDisplay);
         final TextView courseDisplay = findViewById(R.id.courseDisplay);
+        final WebView webview = findViewById(R.id.photoDisplay);
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
         Call<Profile> call = apiCalls.getProfile(profileID);
@@ -107,8 +113,16 @@ public class MatchMaking extends AppCompatActivity {
             public void onResponse(@NonNull Call<Profile> call, @NonNull Response<Profile> response) {
                 Profile show = response.body();
                 nameDisplay.setText(Objects.requireNonNull(show).getName());
-                locationDisplay.setText(show.getLat() +", " + show.getLng());
+                locationDisplay.setText(show.getInterests().replaceAll(",", " "));
                 courseDisplay.setText(show.getCourses().replaceAll(",", " "));
+                String school = show.getSchool();
+                String html =
+                        "     <iframe width=\"350\" height=\"275\" frameborder=\"0\" align=middle src=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyA002TR7ZO-RZ3Gkes-wQEMdffB-GJAu70&q="
+                                + school
+                                +"\" scrolling=\"no\">\n"
+                                +"     </iframe>";
+                webview.getSettings().setJavaScriptEnabled(true);
+                webview.loadData(html, "text/html", null);
             }
 
             @Override
