@@ -33,7 +33,7 @@ public class MatchMaking extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
+        // Does nothing
     }
 
     @Override
