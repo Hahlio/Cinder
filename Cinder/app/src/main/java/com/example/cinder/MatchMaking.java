@@ -59,26 +59,11 @@ public class MatchMaking extends AppCompatActivity {
         webview.loadUrl("https://www.google.com/maps/search/?api=1&query=47.5951518,-122.3316393");
 
 
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                while(pmatches==null){}
-                if(!pmatches.isEmpty())
-                    showProfile(pmatches.get(0));
-                else
-                    outOfMatches();
-            }
-        });
-        thread.start();
-
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!pmatches.isEmpty()){
                     addMatch(profileID,pmatches.get(0),true);
-                    getMatches(profileID);
-                    if(pmatches.isEmpty())
-                        outOfMatches();
                 }
             }
         });
@@ -88,9 +73,6 @@ public class MatchMaking extends AppCompatActivity {
             public void onClick(View view) {
                 if(!pmatches.isEmpty()){
                     addMatch(profileID,pmatches.get(0),false);
-
-                    if(pmatches.isEmpty())
-                        outOfMatches();
                 }
             }
         });
@@ -176,7 +158,10 @@ public class MatchMaking extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<Matches> call, @NonNull Response<Matches> response) {
                 pmatches=response.body().getMatches();
-
+                if(!pmatches.isEmpty())
+                    showProfile(pmatches.get(0));
+                else
+                    outOfMatches();
             }
 
             @Override
