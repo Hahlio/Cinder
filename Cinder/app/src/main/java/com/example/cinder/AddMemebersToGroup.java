@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cinder.restobjects.ContactInfo;
 import com.example.cinder.restobjects.GroupID;
 
 import java.util.List;
@@ -40,8 +41,8 @@ public class AddMemebersToGroup extends AppCompatActivity {
         final Button nextButton = findViewById(R.id.nextContactsButton);
         final TextView num= findViewById(R.id.contactsPageNum);
         final Context context = this;
-        contacts= getIntent().getExtras().getIntegerArrayList("contacts");
-        name = getIntent().getExtras().getStringArrayList("names");
+        getContacts(profileID);
+
 
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,5 +112,24 @@ public class AddMemebersToGroup extends AppCompatActivity {
                 nameDisplay.setText("");
             }
         }
+    }
+    public void getContacts(int profileID){
+        Retrofit retrofit = getRetro();
+        RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
+        Call<ContactInfo> call = apiCalls.getContacts(profileID);
+        call.enqueue(new Callback<ContactInfo>() {
+            @Override
+            public void onResponse(@NonNull Call<ContactInfo> call, @NonNull Response<ContactInfo> response) {
+                contacts=response.body().getMatchID();
+                name=response.body().getUsers();
+                displayContacts(name);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ContactInfo> call, @NonNull Throwable t) {
+                Log.d("error", "error");
+            }
+
+        });
     }
 }
