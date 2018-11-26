@@ -37,7 +37,7 @@ public class UserSettings extends AppCompatActivity {
         notiSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mpref.edit().putBoolean("noti",b);
+                mpref.edit().putBoolean("noti",b).apply();
                 Retrofit retrofit = getRetro();
                 RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
                 NotificationSwitch notificationSwitch = new NotificationSwitch();
