@@ -41,6 +41,26 @@ public class ProfileCreation extends AppCompatActivity {
         String email  = mpref.getString("email", "");
         final int oldProfileID = mpref.getInt("profileID",0);
         final boolean changingProfile= getIntent().getExtras().getBoolean("change");
+
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+// Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
         if(!name.equals("")&&!email.equals("")){
             EditText nameInput = findViewById(R.id.nameInput);
             nameInput.setText(name);
@@ -131,6 +151,8 @@ public class ProfileCreation extends AppCompatActivity {
 
             }
         });
+
+        locationManager.removeUpdates(locationListener);
     }
 
     private void changeToMatchMaking() {
@@ -186,7 +208,7 @@ public class ProfileCreation extends AppCompatActivity {
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
         newProfile.setLat(latitude);
