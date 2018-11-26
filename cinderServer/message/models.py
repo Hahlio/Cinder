@@ -4,6 +4,7 @@ from userprofile.models import Profile
 from Matchmaking.models import Match, groupMembers
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from fcm_django.models import FCMDevice
 
 class Message(models.Model):
     sender = models.ForeignKey(Profile, related_name='sender', on_delete=models.DO_NOTHING)
@@ -31,11 +32,24 @@ def createMessage(senderid, matchid, message, isGroup):
         if isGroup:
             group = groupMembers(matchid)
             for member in group:
-                pass
                 #notify all group members they have a message
+                print(member.id)
+                userDevice = FCMDevice()
+                userDevice.registration_id = member.deviceID
+                userDevice.type = "Android"
+                notificationMsg = match.group_name + " has recieved a new message"
+                if member.notification:
+                    userDevice.send_message(title="New Message", body=notificationMsg)
+                userDevice.send_message(data={"title" : "New Message", "body" : notificationMsg})
         else:
-            pass
             #notify user they have a message
+            userDevice = FCMDevice()
+            userDevice.registration_id = match.returnOtherMatch(sender).deviceID
+            userDevice.type = "Android"
+            notificationMsg = sender.name + " has sent you a message"
+            if match.returnOtherMatch(sender).notification:
+                userDevice.send_message(title="New Message", body=notificationMsg)
+            userDevice.send_message(data={"title" : "New Message", "body" : notificationMsg})
         retval["id"] = msg.id
     except ObjectDoesNotExist:
         retval["id"] = -1
@@ -66,7 +80,3 @@ def messageLog(matchid):
     retval["userID"] = userID
     retval["timestamps"] = timestamps
     return retval
-
-def getMessage(msgid):
-    message = Message.objects.get(pk=msgid)
-    return message

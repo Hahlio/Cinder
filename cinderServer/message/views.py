@@ -16,9 +16,11 @@ def messages(request, profile_id):
     if validID(profile_id):
         if request.method == 'PUT':
             retval = messageLog(args["matchid"])
-            print(retval)
+            #print(retval)
         elif request.method == 'POST':
+            print(args)
             retval = createMessage(profile_id, args["matchid"], args["message"], args["isGroup"])
+            #print(retval)
         else:
             code = 405
             retval["status"] = 405

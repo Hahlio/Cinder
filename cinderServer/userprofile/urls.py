@@ -9,6 +9,8 @@ urlpatterns = [
     path('username/', views.lookupUser),
     # profile/id
     path('<int:profile_id>', views.profDetails),
+    # profile/notification/<id>
+    path('notification/<int:profile_id>', views.notify),
     # profile/
     path('', views.createProf),
 ]

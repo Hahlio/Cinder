@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
-from .models import returnListOfMatches, returnMatch, matchAccept, createGroup, groupAdd, groupLeave, groupMembers, returnContacts, returnGroups
+from .models import returnListOfMatches, returnMatch, matchAccept, createGroup, groupAdd, groupLeave, groupMembers, returnContacts, returnGroups, removeContact, returnGroupContacts
 from .serializers import MatchListSerializer
 from userprofile.models import validID
 
@@ -58,9 +58,18 @@ class contacts(APIView):
     def put(self, request, profile_id):
         return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @classmethod
     def delete(self, request, profile_id):
-        return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if validID(profile_id):
+            retval = {}
+            if removeContact(request.data["matchid"], profile_id):
+                retval["status"] = "Removed Contact"
+                return Response(retval, status=status.HTTP_200_OK)
+            else:
+                retval["status"] = "User accessing wrong matchid or matchid doesn't exist."
+                return Response(retval, status=status.HTTP_404_NOT_FOUND)
+                            
+        else:
+            return Response(request.data, status=status.HTTP_404_NOT_FOUND)
 
 
 class groups(APIView):
@@ -88,7 +97,29 @@ class groups(APIView):
 
     def delete(self, request, profile_id):
         if validID(profile_id):
-            groupLeave(profile_id, request.data["matchID"])
+            groupLeave(profile_id, request.data["matchid"])
             return Response(request.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+
+
+class groupcontacts(APIView):
+    @classmethod
+    def get(self, request, profile_id):
+        return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @classmethod
+    def post(self, request, profile_id):
+        return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def put(self, request, profile_id):
+        if validID(profile_id):
+            print(request.data)
+            groups = returnGroupContacts(profile_id, request.data["matchid"])
+            return Response(groups, status=status.HTTP_200_OK)
+        else:
+            return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+
+    @classmethod
+    def delete(self, request, profile_id):
+        return Response(request.data, status=status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -1,6 +1,6 @@
 from django.urls import reverse,resolve
 from userprofile.models import Profile, createProfile, modifyProfile
-from .models import returnMatch, returnListOfMatches, createMatch, updateMatch
+from .models import Match, returnMatch, returnListOfMatches, createMatch, updateMatch, matchAccept, createGroup, groupAdd, groupLeave, groupMembers, returnContacts, removeContact, returnGroups, returnGroupContacts
 
 import pytest
 
@@ -335,9 +335,8 @@ class TestModels:
         request["user2"] = uid[1]
 
         match = returnMatch(request)
-        match.hasMatched = True
-        match.accepted = True
-        match.save()
+        matchAccept(uid[0], match, True)
+        matchAccept(uid[1], match, True)
 
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount-1        
@@ -359,9 +358,7 @@ class TestModels:
         request["user2"] = uid[1]
 
         match = returnMatch(request)
-        match.hasMatched = True
-        match.accepted = False
-        match.save()
+        matchAccept(uid[0], match, False)
 
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount-1
@@ -384,7 +381,147 @@ class TestModels:
         matchList = returnListOfMatches(uid[0])
         assert len(matchList["Matches"]) == listAmount-1
 
+    
+    def test_contact_list(self):
+        test = {}
+        uid = {}
+        for x in range(0, 6):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
 
-        
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        matchAccept(uid[0], match, True)
+        matchAccept(uid[1], match, True)
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount-1
+
+        contactList = returnContacts(uid[0])
+        assert contactList["matchID"][0] == match.id
+
+    def test_remove_contacts(self):
+        test = {}
+        uid = {}
+        for x in range(0, 6):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        matchAccept(uid[0], match, True)
+        matchAccept(uid[1], match, True)
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount-1
+
+        contactList = returnContacts(uid[0])
+        assert contactList["matchID"][0] == match.id
+
+        removeContact(match.id, uid[0])
+        contactList = returnContacts(uid[0])
+        assert len(contactList["matchID"]) == 0
+
+    
+    def test_create_Group(self):
+        test = {}
+        uid = {}
+        for x in range(0, 6):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        matchAccept(uid[0], match, True)
+        matchAccept(uid[1], match, True)
+
+        groupID = createGroup("TestGroup", uid[0])
+        group = Match.objects.get(pk=groupID["matchid"])
+        assert group.group_name == "TestGroup"
+        assert group.group_members.all().filter(id=uid[0]).count() == 1
+
+        assert returnGroups(uid[0])["matchID"][0] == group.id
+
+
+    def test_add_member(self):
+        test = {}
+        uid = {}
+        for x in range(0, 6):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        matchAccept(uid[0], match, True)
+        matchAccept(uid[1], match, True)
+
+        groupID = createGroup("TestGroup", uid[0])
+        group = Match.objects.get(pk=groupID["matchid"])
+        assert group.group_name == "TestGroup"
+        assert len(group.group_members.all().filter(id=uid[0])) == 1
+
+        groupAdd(match.id, group.id, uid[0])
+        assert len(group.group_members.all()) == 2
+        assert len(returnGroupContacts(uid[0], group.id)["matchID"]) == 0
+
+    def test_remove_member(self):
+        test = {}
+        uid = {}
+        for x in range(0, 6):
+            test[x] = createProfile(testProfiles[x])
+            uid[x] = test[x]["id"]
+            createMatch(Profile.objects.get(pk=uid[x]))
+
+        matchList = returnListOfMatches(uid[0])
+        assert len(matchList["Matches"]) == listAmount
+
+        request = {}
+        request["user1"] = uid[0]
+        request["user2"] = uid[1]
+
+        match = returnMatch(request)
+        matchAccept(uid[0], match, True)
+        matchAccept(uid[1], match, True)
+
+        groupID = createGroup("TestGroup", uid[0])
+        group = Match.objects.get(pk=groupID["matchid"])
+        assert group.group_name == "TestGroup"
+        assert len(group.group_members.all().filter(id=uid[0])) == 1
+
+        groupAdd(match.id, group.id, uid[0])
+        assert len(group.group_members.all()) == 2
+        assert len(returnGroupContacts(uid[0], group.id)["matchID"]) == 0
+
+        groupLeave(uid[0], group.id)
+        assert len(returnGroups(uid[0])["matchID"]) == 0
+
 
 

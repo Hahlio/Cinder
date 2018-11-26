@@ -50,6 +50,33 @@ def profDetails(request, profile_id):
     print(retval)
     return JsonResponse(retval, status=code)
 
+
+def notify(request, profile_id):
+    """
+    Updates notifications for the user
+    PUT: updates the profile (MUST SEND VALUES WHICH ARE NOT CHANGED ALSO)
+    """
+    # Tries to retreive the profile before executing anything
+    code = 200
+    retval = {}
+    if validID(profile_id):
+        p = Profile.objects.get(pk=profile_id)
+        if request.method == 'PUT':
+            jsonArgs = request.body.decode("utf-8")
+            args = json.loads(jsonArgs)
+            retval = p.modifyNotify(args["notify"])
+        else:
+            code = 405
+            retval["status"] = 405
+            retval["userMessage"] = "The requested method is not allowed"
+    else:
+        code = 404
+        retval["status"] = 404
+        retval["userMessage"] = "The profile you requested does not exist"
+    print(retval)
+    return JsonResponse(retval, status=code)
+
+
 def createProf(request):
     """
     Methods used when the profile doesn't exist
@@ -61,9 +88,10 @@ def createProf(request):
         jsonArguments = request.body.decode("utf-8")
         args = json.loads(jsonArguments)
         if findID(args["username"])["id"] != -1:
-            code = 406
-            retval["status"] = 406
+            code = 200
+            retval["status"] = 200
             retval["userMessage"] = "Username already exists"
+            retval["id"] = -1
         else:
             retval = createProfile(args)
             # Updates the matchmaking algorithm in the background
@@ -99,7 +127,10 @@ def lookupUser(request):
             largs["deviceid"] = args["deviceid"]
             p = Profile.objects.get(pk=retval["id"])
             retval = p.login(largs)
-            retval["id"] = uid
+            if retval["success"]:
+                retval["id"] = uid
+            else:
+                retval["id"] = -1
     else:
         code = 405
         retval["status"] = 405
@@ -120,6 +151,7 @@ def fbCreateOrLogin(request):
         else:
             response = requests.get('https://graph.facebook.com/me?fields=name,email&access_token=%s' % args["token"])
             data = response.json()
+            print(data)
             if "error" not in args:
                 test = findID(data["email"])
                 if test["id"] >= 0:
@@ -128,7 +160,9 @@ def fbCreateOrLogin(request):
                     user = Profile.objects.get(pk=test["id"])
                     creds["password"] = user.password
                     creds["deviceid"] = args["deviceid"]
-                    retval = user.login(test["email"], user.password)
+                    print(data["email"])
+                    print(user.password)
+                    retval = user.login(creds)
                     retval["id"] = test["id"]
                 else:
                     # Tell the app that profile does not exist and must create a profile with information I provide
