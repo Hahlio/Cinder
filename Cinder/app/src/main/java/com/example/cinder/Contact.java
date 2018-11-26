@@ -3,8 +3,10 @@ package com.example.cinder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -83,13 +85,33 @@ public class Contact extends AppCompatActivity {
                 group = !group;
                 if(group){
                     createGroupButton.setVisibility(View.VISIBLE);
-                    groupsButton.setText("Matches");
+                    Drawable image = ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_person_black_24dp
+                    );
+                    image.setBounds(
+                            0, // left
+                            0, // top
+                            image.getIntrinsicWidth(), // right
+                            image.getIntrinsicHeight() // bottom
+                    );
+                    groupsButton.setCompoundDrawables(image,null,null,null);
                     title.setText("Groups");
                     getGroups(profileID);
                 }else{
                     createGroupButton.setVisibility(View.GONE);
-                    groupsButton.setText("Groups");
                     title.setText("Contacts");
+                    Drawable image = ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_group_black_24dp
+                    );
+                    image.setBounds(
+                            0, // left
+                            0, // top
+                            image.getIntrinsicWidth(), // right
+                            image.getIntrinsicHeight() // bottom
+                    );
+                    groupsButton.setCompoundDrawables(image,null,null,null);
                     getContacts(profileID);
                 }
             }

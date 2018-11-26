@@ -95,7 +95,6 @@ public class Chat extends AppCompatActivity {
         // Displays different buttons depending on what kind of chat you are in
         if(!group){
             addGroup.setVisibility(View.INVISIBLE);
-            leave.setText("Unmatch");
             leave.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view) {
