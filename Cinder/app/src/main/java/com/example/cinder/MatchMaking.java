@@ -116,14 +116,19 @@ public class MatchMaking extends AppCompatActivity {
                 locationDisplay.setText("Interests: "+show.getInterests().replaceAll(",", " "));
                 courseDisplay.setText(show.getCourses().replaceAll(",", " "));
                 String school = show.getSchool();
-                int width = webview.getWidth()/3;
-                int height = webview.getHeight()/3;
+                int width = webview.getWidth();
+                int height = webview.getHeight();
                 String html =
                         "     <iframe width=\""+width+"\" height=\""+height+"\" frameborder=\"0\" align=middle src=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyA002TR7ZO-RZ3Gkes-wQEMdffB-GJAu70&q="
                                 + school
                                 +"\" scrolling=\"no\">\n"
                                 +"     </iframe>";
+                webview.setInitialScale(1);
                 webview.getSettings().setJavaScriptEnabled(true);
+                webview.getSettings().setLoadWithOverviewMode(true);
+                webview.getSettings().setUseWideViewPort(true);
+                webview.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+                webview.setScrollbarFadingEnabled(false);
                 webview.loadData(html, "text/html", null);
             }
 
