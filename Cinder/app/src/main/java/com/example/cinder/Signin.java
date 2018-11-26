@@ -50,12 +50,18 @@ public class Signin extends AppCompatActivity {
 
     }
 
+    /**
+     * initialize facebook callback manager
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Return to the home screen of the device when the back button is pressed
+     */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -70,7 +76,7 @@ public class Signin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
@@ -87,6 +93,9 @@ public class Signin extends AppCompatActivity {
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /**
+                 * thread that runs in the background that waits for restAPI result
+                 */
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -120,6 +129,9 @@ public class Signin extends AppCompatActivity {
                 info.setDeviceid(FirebaseInstanceId.getInstance().getToken());
                 Call<ProfileID> call = apiCalls.getProfileID(info);
                 call.enqueue(new Callback<ProfileID>() {
+                    /**
+                     *  Save login state, server hash and username
+                     */
                     @Override
                     public void onResponse(@NonNull Call<ProfileID> call, Response<ProfileID> response) {
                         int profileID = Objects.requireNonNull(response.body()).getId();
@@ -156,6 +168,9 @@ public class Signin extends AppCompatActivity {
                 changeToProfileCreation();
             }
         });
+        /**
+         * Login using facebook
+         */
         final String EMAIL = "email";
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.login_button);
@@ -167,6 +182,9 @@ public class Signin extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                /**
+                 * thread that runs in the background, waiting for RestAPI response
+                 */
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -177,9 +195,10 @@ public class Signin extends AppCompatActivity {
                         else
                             changeToProfileCreation();
 
-                        }
+                    }
                 });
                 thread.start();
+
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
                 if (isLoggedIn) {
@@ -190,6 +209,9 @@ public class Signin extends AppCompatActivity {
                     fb.setToken(accessToken.getToken());
                     Call<FacebookLoginReturn> call = apiCalls.facebookLogin(fb);
                     call.enqueue(new Callback<FacebookLoginReturn>() {
+                        /**
+                         *  Save login state, server hash and username
+                         */
                         @Override
                         public void onResponse(Call<FacebookLoginReturn> call, Response<FacebookLoginReturn> response) {
                             int profileID = Objects.requireNonNull(response.body()).getId();
@@ -229,13 +251,13 @@ public class Signin extends AppCompatActivity {
             }
         });
     }
-
-        public void changeToMatchMaking (){
+    public void changeToMatchMaking (){
             Intent intent = new Intent(this, MatchMaking.class);
             intent.putExtra("change",false);
             startActivity(intent);
         }
-        public void changeToProfileCreation (){
+
+    public void changeToProfileCreation (){
             Intent intent = new Intent(this, ProfileCreation.class);
             startActivity(intent);
         }

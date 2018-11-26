@@ -81,6 +81,10 @@ public class AddMemebersToGroup extends AppCompatActivity {
 
     }
 
+    /**
+     * Add a user to the Group
+     * @param matchID the ID that the user to be added relates to the current user with
+     */
     public void addToGroup(int matchID){
         GroupAdd groupadd = new GroupAdd();
         groupadd.setMatchID(groupMatchID);
@@ -103,7 +107,6 @@ public class AddMemebersToGroup extends AppCompatActivity {
     }
 
 
-
     public void displayContacts(List<String> name){
         for(int k = 0; k <12; k++){
             if((k+offset)<name.size()) {
@@ -115,6 +118,11 @@ public class AddMemebersToGroup extends AppCompatActivity {
             }
         }
     }
+
+    /**
+     * Get all the contacts of the current logged in user
+     * @param profileID ID of the current logged in user
+     */
     public void getContacts(int profileID){
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);

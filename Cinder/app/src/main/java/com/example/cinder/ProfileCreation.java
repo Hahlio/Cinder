@@ -105,16 +105,7 @@ public class ProfileCreation extends AppCompatActivity {
                             mpref.edit().putString("name",getOutput(R.id.nameInput)).putString("email",getOutput(R.id.usernameInput)).apply();
                         }
                         else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Context context = getApplicationContext();
-                                    CharSequence text = "Username Already exist";
-                                    int duration = Toast.LENGTH_SHORT;
-                                    Toast toast = Toast.makeText(context, text, duration);
-                                    toast.show();
-                                }
-                            });
+                            showToast("Username Already exist");
                         }
 
                     }
@@ -253,5 +244,17 @@ public class ProfileCreation extends AppCompatActivity {
         return result;
     }
 
+    protected void showToast(final String message){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Context context = getApplicationContext();
+                CharSequence text = message;
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
+    }
 
 }

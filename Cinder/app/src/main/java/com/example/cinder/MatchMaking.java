@@ -100,6 +100,11 @@ public class MatchMaking extends AppCompatActivity {
 
 
     }
+
+    /**
+     * shows the profile of profileID
+     * @param profileID profileID of the user to be displayed
+     */
     public void showProfile(int profileID){
         final TextView nameDisplay = findViewById(R.id.nameDisplay);
         final TextView locationDisplay = findViewById(R.id.locationDisplay);
@@ -140,6 +145,8 @@ public class MatchMaking extends AppCompatActivity {
 
 
     }
+
+
     public void outOfMatches() {
         final TextView nameDisplay = findViewById(R.id.nameDisplay);
         final TextView locationDisplay = findViewById(R.id.locationDisplay);
@@ -149,6 +156,12 @@ public class MatchMaking extends AppCompatActivity {
         courseDisplay.setText("No More Matches");
     }
 
+    /**
+     *
+     * @param userID1 ID of the current logged in user
+     * @param userID2 ID of the other user of a match
+     * @param accept whether user accepted or declined the match
+     */
     public void addMatch(int userID1, int userID2, boolean accept){
         NewMatch newMatch = new NewMatch();
         newMatch.setAccepted(accept);
@@ -171,6 +184,11 @@ public class MatchMaking extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * Get all matches of the user with profileID
+     * @param profileID
+     */
     public void getMatches(int profileID) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -192,6 +210,8 @@ public class MatchMaking extends AppCompatActivity {
 
         });
     }
+
+
     public void changeToContacts (){
         Intent intent = new Intent(this, Contact.class);
         startActivity(intent);

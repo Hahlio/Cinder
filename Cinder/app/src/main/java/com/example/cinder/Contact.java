@@ -170,7 +170,9 @@ public class Contact extends AppCompatActivity {
 
 
     }
-
+    /**
+    * @param profileID profile id of the user
+     */
     public void getContacts(int profileID) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
@@ -190,6 +192,11 @@ public class Contact extends AppCompatActivity {
 
         });
     }
+
+    /**
+     * Get all the groups the user is in and display them
+     * @param profileID ID of the current logged in user
+     */
     public void getGroups(int profileID) {
         Retrofit retrofit = getRetro();
         RestApiCalls apiCalls = retrofit.create(RestApiCalls.class);
